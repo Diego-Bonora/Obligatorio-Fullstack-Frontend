@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { Link, NavLink, Outlet } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
-import fetchData from '../api/fetchData'
+import api from '../api/api'
 import { logout, setUser } from '../features/auth/auth.slice'
 
 const ContainerPage = () => {
@@ -15,7 +15,7 @@ const ContainerPage = () => {
 
     const loadUser = async () => {
       try {
-        const me = await fetchData('/users/me')
+        const { data: me } = await api.get('/users/me')
         dispatch(setUser(me))
       } catch (error) {
         console.error('Error al obtener el usuario:', error)
