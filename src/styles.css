@@ -1,4 +1,4 @@
-:root {
+/*:root {
   --color-bg: #faf6ef;
   --color-surface: #ffffff;
   --color-text: #2b2420;
@@ -65,7 +65,7 @@ a {
   text-align: center;
 }
 
-/* Header */
+ Header 
 .main-header {
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
@@ -114,7 +114,7 @@ a {
   gap: var(--space-md);
 }
 
-/* Cards and grid */
+/* Cards and grid 
 .card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -129,7 +129,7 @@ a {
   gap: var(--space-lg);
 }
 
-/* Forms */
+/* Forms 
 .form-group {
   display: flex;
   flex-direction: column;
@@ -160,7 +160,7 @@ a {
   font-size: 0.875rem;
 }
 
-/* Buttons */
+/* Buttons 
 .btn {
   display: inline-block;
   font: inherit;
@@ -196,4 +196,37 @@ a {
   border-color: var(--color-disabled);
   color: #fff;
   cursor: not-allowed;
+}*/
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Poppins:wght@500;600;700&display=swap');
+
+:root {
+  /* Paleta Frescura Orgánica */
+  --color-bg: #fafafa;         /* Blanco roto para el fondo principal */
+  --color-surface: #ffffff;    /* Blanco puro para las tarjetas y fondo de posteos */
+  --color-text: #37474f;       /* Gris carbón para máxima legibilidad sin ser negro puro */
+  --color-muted: #78909c;      /* Gris azulado suave para textos secundarios o placeholders */
+  --color-border: #e8f5e9;     /* Verde menta muy pálido para bordes y divisiones sutiles */
+  
+  --color-primary: #66bb6a;    /* Verde Salvia (botones principales, likes activos, destacados) */
+  --color-primary-dark: #43a047; /* Verde Salvia más oscuro para el efecto :hover */
+  --color-secondary: #8cb369;  /* Verde Oliva para etiquetas (tags), categorías o íconos */
+  
+  --color-danger: #e57373;     /* Rojo suave adaptado a la paleta clara para errores o borrar */
+  --color-disabled: #c8e6c9;   /* Verde desaturado y claro para botones inactivos */
+
+  /* Tipografías modernas (Poppins para títulos, Nunito para lectura) */
+  --font-body: 'Nunito', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Poppins', sans-serif;
+
+  /* Espaciados originales mantenidos */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+
+  /* Bordes y sombras adaptadas al estilo orgánico */
+  --radius: 12px; 
+  --shadow: 0 4px 16px rgba(102, 187, 106, 0.08); /* Sombra muy sutil con un tinte verdoso */
 }
