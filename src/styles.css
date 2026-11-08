@@ -62,6 +62,11 @@ a {
   text-align: center;
 }
 
+.register-link {
+  margin-top: var(--space-md);
+  color: var(--color-muted);
+}
+
 .loading {
   color: var(--color-muted);
   text-align: center;

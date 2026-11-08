@@ -1,12 +1,10 @@
-import { Link } from 'react-router'
+import RegisterForm from '../../components/register/RegisterForm'
 
 const RegisterPage = () => {
   return (
     <div className="container auth-container">
-      <h1>🍲 Crear cuenta</h1>
-      <p className="register-link">
-        ¿Ya tenés cuenta? <Link to="/login">Ingresá</Link>
-      </p>
+      <h1>Crear cuenta</h1>
+      <RegisterForm />
     </div>
   )
 }
