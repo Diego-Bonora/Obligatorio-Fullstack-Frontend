@@ -11,8 +11,7 @@ import ContainerPage from './pages/ContainerPage'
 import LoginPage from './pages/login/LoginPage'
 import RegisterPage from './pages/register/RegisterPage'
 import FeedPage from './pages/feed/FeedPage'
-import MyRecipesPage from './pages/my-recipes/MyRecipesPage'
-import NewRecipePage from './pages/new-recipe/NewRecipePage'
+import RecipeDetailPage from './pages/recipe-detail/RecipeDetailPage'
 import ProfilePage from './pages/profile/ProfilePage'
 import AdminPage from './pages/admin/AdminPage'
 import NotFoundPage from './pages/not-found/NotFoundPage'
@@ -29,8 +28,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<ContainerPage />}>
               <Route index element={<FeedPage />} />
-              <Route path="my-recipes" element={<MyRecipesPage />} />
-              <Route path="recipes/new" element={<NewRecipePage />} />
+              <Route path="recipes/:id" element={<RecipeDetailPage />} />
               <Route path="profile" element={<ProfilePage />} />
               <Route element={<AdminRoute />}>
                 <Route path="admin" element={<AdminPage />} />
