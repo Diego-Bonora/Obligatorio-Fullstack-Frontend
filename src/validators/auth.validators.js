@@ -1,4 +1,5 @@
 import Joi from 'joi'
+import { imageField } from './recipe.validators'
 
 export const loginSchema = Joi.object({
   username: Joi.string().trim().required().messages({
@@ -30,4 +31,15 @@ export const registerSchema = Joi.object({
     'any.only': 'Las contraseñas no coinciden',
     'any.required': 'Repetí la contraseña'
   })
+})
+
+export const profileSchema = Joi.object({
+  image: imageField,
+  username: Joi.string().trim().min(3).max(30).required().messages({
+    'string.empty': 'Ingresá un usuario',
+    'string.min': 'El usuario debe tener al menos {#limit} caracteres',
+    'string.max': 'El usuario no puede tener más de {#limit} caracteres',
+    'any.required': 'Ingresá un usuario'
+  }),
+  email: registerSchema.extract('email')
 })

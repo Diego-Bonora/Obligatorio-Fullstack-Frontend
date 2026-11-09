@@ -1,9 +1,10 @@
 import MyRecipes from '../../components/profile/MyRecipes'
+import UserInfo from '../../components/profile/UserInfo'
 
 const ProfilePage = () => {
   return (
     <section>
-      <h1>Mi perfil</h1>
+      <UserInfo />
       <MyRecipes />
     </section>
   )

@@ -19,6 +19,8 @@ import Reports from './components/admin/Reports'
 import Users from './components/admin/Users'
 import Stats from './components/admin/Stats'
 import NotFoundPage from './pages/not-found/NotFoundPage'
+import UsersPage from './pages/users/UsersPage'
+import UserProfilePage from './pages/users/UserProfilePage'
 
 function App() {
   return (
@@ -33,6 +35,8 @@ function App() {
             <Route path="/" element={<ContainerPage />}>
               <Route index element={<FeedPage />} />
               <Route path="recipes/:id" element={<RecipeDetailPage />} />
+              <Route path="users" element={<UsersPage/>} />
+              <Route path="users/:id" element={<UserProfilePage />} />
               <Route path="profile" element={<ProfilePage />} />
               <Route element={<AdminRoute />}>
                 <Route path="admin" element={<AdminPage />}>
