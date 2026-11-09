@@ -52,8 +52,8 @@ const ContainerPage = () => {
           <Link to="/" className="app-logo">🍲 <span>Recetario</span></Link>
           <nav className="main-nav">
             <NavLink to="/" end>Inicio</NavLink>
-            <NavLink to="/profile">Perfil</NavLink>
-            {user?.role === 'admin' && <NavLink to="/admin">Admin</NavLink>}
+            <NavLink to="/profile">Mi perfil</NavLink>
+            {user?.role === 'admin' && <NavLink to="/admin">Panel de administración</NavLink>}
           </nav>
           <div className="header-user">
             {user && <span>{user.username}</span>}

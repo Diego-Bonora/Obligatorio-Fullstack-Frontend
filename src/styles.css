@@ -307,7 +307,14 @@ a {
 
 .recipe-card-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-sm);
+}
+
+.pagination-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .pagination {
@@ -670,6 +677,121 @@ a {
   font-size: 0.85rem;
 }
 
+/* Admin */
+.admin-page,
+.admin-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.category-list h3,
+.category-list p {
+  margin: 0 0 var(--space-xs);
+}
+
+.category-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.category-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.btn-icon {
+  margin-right: var(--space-xs);
+  vertical-align: -0.15em;
+}
+
+.category-status {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
+.stat-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-md);
+}
+
+.stat-label {
+  margin: 0;
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+.stat-value {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.stat-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  align-items: start;
+  gap: var(--space-md);
+}
+
+.chart-card h3 {
+  margin: 0 0 var(--space-md);
+}
+
+.chart-canvas {
+  position: relative;
+}
+
+.plan-users {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.plan-users h3 {
+  margin: 0;
+}
+
+.plan-users-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.plan-users-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-xs) var(--space-md);
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--color-border);
+  overflow-wrap: anywhere;
+}
+
+.plan-users-list li:last-child {
+  border-bottom: none;
+}
+
+.plan-users-name {
+  font-weight: 700;
+}
+
 /* Feed tabs and filters */
 .tabs {
   display: flex;
@@ -677,6 +799,8 @@ a {
 }
 
 .tab {
+  text-align: center;
+  text-decoration: none;
   flex: 1;
   padding: var(--space-sm) var(--space-md);
   border: none;

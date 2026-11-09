@@ -14,6 +14,10 @@ import FeedPage from './pages/feed/FeedPage'
 import RecipeDetailPage from './pages/recipe-detail/RecipeDetailPage'
 import ProfilePage from './pages/profile/ProfilePage'
 import AdminPage from './pages/admin/AdminPage'
+import Categories from './components/admin/Categories'
+import Reports from './components/admin/Reports'
+import Users from './components/admin/Users'
+import Stats from './components/admin/Stats'
 import NotFoundPage from './pages/not-found/NotFoundPage'
 
 function App() {
@@ -31,7 +35,13 @@ function App() {
               <Route path="recipes/:id" element={<RecipeDetailPage />} />
               <Route path="profile" element={<ProfilePage />} />
               <Route element={<AdminRoute />}>
-                <Route path="admin" element={<AdminPage />} />
+                <Route path="admin" element={<AdminPage />}>
+                 
+                  <Route path="categories" element={<Categories />} />
+                  <Route path="reports" element={<Reports />} />
+                  <Route path="users" element={<Users />} />
+                  <Route path="stats" element={<Stats />} />
+                </Route>
               </Route>
             </Route>
           </Route>
