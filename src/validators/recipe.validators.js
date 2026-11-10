@@ -3,6 +3,18 @@ import Joi from 'joi'
 const MAX_IMAGE_SIZE = 4 * 1024 * 1024
 const IMAGE_TYPES = ['image/jpeg', 'image/png']
 
+// the file input gives a FileList; the image is optional
+export const imageField = Joi.any().custom((files, helpers) => {
+  const file = files?.[0]
+  if (!file) return files
+  if (!IMAGE_TYPES.includes(file.type)) return helpers.error('image.type')
+  if (file.size > MAX_IMAGE_SIZE) return helpers.error('image.size')
+  return files
+}).messages({
+  'image.type': 'Solo se permiten imágenes JPG o PNG',
+  'image.size': 'La imagen no puede pesar más de 4 MB'
+})
+
 const ingredient = Joi.object({
   name: Joi.string().trim().min(1).max(100).required().messages({
     'string.empty': 'Falta el ingrediente',
@@ -63,15 +75,5 @@ export const recipeSchema = Joi.object({
     'tags.count': 'Podés poner hasta 10 etiquetas',
     'tags.length': 'Cada etiqueta puede tener hasta 30 caracteres'
   }),
-  // the file input gives a FileList; the image is optional
-  image: Joi.any().custom((files, helpers) => {
-    const file = files?.[0]
-    if (!file) return files
-    if (!IMAGE_TYPES.includes(file.type)) return helpers.error('image.type')
-    if (file.size > MAX_IMAGE_SIZE) return helpers.error('image.size')
-    return files
-  }).messages({
-    'image.type': 'Solo se permiten imágenes JPG o PNG',
-    'image.size': 'La imagen no puede pesar más de 4 MB'
-  })
+  image: imageField
 })

@@ -1,12 +1,10 @@
-import { Link } from 'react-router'
+import LoginForm from '../../components/login/LoginForm'
 
 const LoginPage = () => {
   return (
     <div className="container auth-container">
-      <h1>🍲 Ingresar</h1>
-      <p className="register-link">
-        ¿No tenés cuenta? <Link to="/register">Registrate</Link>
-      </p>
+      <h1>Iniciar sesión</h1>
+      <LoginForm />
     </div>
   )
 }

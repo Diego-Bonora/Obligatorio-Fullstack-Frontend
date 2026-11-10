@@ -7,6 +7,7 @@ import { formatRelativeDate } from '../../utils/date'
 import { difficultyLabels } from '../../utils/labels'
 import LikeButton from '../../components/recipe-detail/LikeButton'
 import ReportButton from '../../components/recipe-detail/ReportButton'
+import AdminDeleteButton from '../../components/recipe-detail/AdminDeleteButton'
 import Substitutions from '../../components/recipe-detail/Substitutions'
 import Comments from '../../components/recipe-detail/Comments'
 
@@ -15,6 +16,7 @@ const RecipeDetailPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const userId = useSelector(state => state.auth.user?._id)
+  const isAdmin = useSelector(state => state.auth.user?.role === 'admin')
   const categories = useSelector(state => state.categories.list)
   const [recipe, setRecipe] = useState(null)
   const [error, setError] = useState(null)
@@ -93,6 +95,7 @@ const RecipeDetailPage = () => {
         <div className="recipe-card-actions">
           <LikeButton recipeId={recipe._id} liked={Boolean(recipe.likedByMe)} count={recipe.likesCount} onChange={handleLikeChange} />
           {!isOwner && <ReportButton recipeId={recipe._id} />}
+          {isAdmin && !isOwner && <AdminDeleteButton recipeId={recipe._id} onDeleted={() => navigate('/', { replace: true })} />}
         </div>
       </article>
 

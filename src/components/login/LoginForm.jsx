@@ -1,0 +1,64 @@
+import { useId, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { useForm } from 'react-hook-form'
+import { Link, useNavigate } from 'react-router'
+import { joiResolver } from '@hookform/resolvers/joi'
+import api from '../../api/api'
+import { loginSuccess } from '../../features/auth/auth.slice'
+import { setPendingMessage } from '../../features/messages/messages.slice'
+import { getErrorMessage } from '../../utils/apiError'
+import { loginSchema } from '../../validators/auth.validators'
+
+const LoginForm = () => {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const usernameId = useId()
+  const passwordId = useId()
+  const [serverError, setServerError] = useState(null)
+  const { handleSubmit, register, formState: { errors, isValid, isSubmitting } } = useForm({
+    resolver: joiResolver(loginSchema),
+    mode: 'onChange',
+    defaultValues: { username: '', password: '' }
+  })
+
+  const handleLogin = async (credentials) => {
+    setServerError(null)
+    try {
+      const { data } = await api.post('/auth/login', credentials)
+      dispatch(setPendingMessage(data.message))
+      dispatch(loginSuccess(data.token))
+      navigate('/', { replace: true })
+    } catch (error) {
+      setServerError(getErrorMessage(error))
+    }
+  }
+
+  return (
+    <>
+    <form onSubmit={handleSubmit(handleLogin)}>
+      <div className="form-group">
+        <label htmlFor={usernameId}>Usuario</label>
+        <input type="text" id={usernameId} autoComplete="username" {...register('username')} />
+        {errors.username && <span className="error">{errors.username.message}</span>}
+      </div>
+
+      <div className="form-group">
+        <label htmlFor={passwordId}>Contraseña</label>
+        <input type="password" id={passwordId} autoComplete="current-password" {...register('password')} />
+        {errors.password && <span className="error">{errors.password.message}</span>}
+      </div>
+
+      {serverError && <p className="error">{serverError}</p>}
+
+      <button type="submit" className="btn primary" disabled={!isValid || isSubmitting}>
+        {isSubmitting ? 'Ingresando...' : 'Ingresar'}
+      </button>
+    </form>
+    <p className="register-link">
+      ¿No tenés cuenta? <Link to="/register">Registrate acá</Link>
+    </p>
+    </>
+  )
+}
+
+export default LoginForm

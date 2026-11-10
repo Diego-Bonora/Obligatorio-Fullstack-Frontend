@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
@@ -11,20 +11,23 @@ const ContainerPage = () => {
   const dispatch = useDispatch()
   const token = useSelector(state => state.auth.token)
   const user = useSelector(state => state.auth.user)
+  const [userError, setUserError] = useState(null)
+  const [reloadCount, setReloadCount] = useState(0)
 
   useEffect(() => {
     if (!token || user) return
 
     const loadUser = async () => {
+      setUserError(null)
       try {
         const { data: me } = await api.get('/users/me')
         dispatch(setUser(me))
       } catch (error) {
-        if (error.response?.status !== 401) toast.error(getErrorMessage(error))
+        if (error.response?.status !== 401) setUserError(getErrorMessage(error))
       }
     }
     loadUser()
-  }, [token, user, dispatch])
+  }, [token, user, dispatch, reloadCount])
 
   useEffect(() => {
     if (!token) return
@@ -52,8 +55,9 @@ const ContainerPage = () => {
           <Link to="/" className="app-logo">🍲 <span>Recetario</span></Link>
           <nav className="main-nav">
             <NavLink to="/" end>Inicio</NavLink>
-            <NavLink to="/profile">Perfil</NavLink>
-            {user?.role === 'admin' && <NavLink to="/admin">Admin</NavLink>}
+            <NavLink to="/users" end>Usuarios</NavLink>
+            <NavLink to="/profile">Mi perfil</NavLink>
+            {user?.role === 'admin' && <NavLink to="/admin">Panel de administración</NavLink>}
           </nav>
           <div className="header-user">
             {user && <span>{user.username}</span>}
@@ -63,6 +67,12 @@ const ContainerPage = () => {
       </header>
 
       <main className="container">
+        {userError && (
+          <div className="feed-error">
+            <p className="error">{userError}</p>
+            <button type="button" className="btn secondary" onClick={() => setReloadCount(prev => prev + 1)}>Reintentar</button>
+          </div>
+        )}
         <Outlet />
       </main>
     </>

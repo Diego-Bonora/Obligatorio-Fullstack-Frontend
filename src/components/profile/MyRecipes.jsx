@@ -16,6 +16,8 @@ const MyRecipes = () => {
   const user = useSelector(state => state.auth.user)
   const categories = useSelector(state => state.categories.list)
   const userId = user?._id
+  // the cards show the author's name, so a profile edit has to reload them
+  const username = user?.username
 
   const [recipes, setRecipes] = useState([])
   const [meta, setMeta] = useState(null)
@@ -53,7 +55,7 @@ const MyRecipes = () => {
     loadRecipes()
 
     return () => { ignore = true }
-  }, [userId, page, filters, reloadKey])
+  }, [userId, username, page, filters, reloadKey])
 
   const refreshUser = async () => {
     try {
