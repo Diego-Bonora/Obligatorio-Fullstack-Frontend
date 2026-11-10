@@ -19,6 +19,7 @@ const Users = () => {
   const [reloadCount, setReloadCount] = useState(0)
   const [busyId, setBusyId] = useState(null)
   const [confirmingId, setConfirmingId] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
 
   useEffect(() => {
     let ignore = false
@@ -58,11 +59,12 @@ const Users = () => {
 
   const changeStatus = async (id, active) => {
     setBusyId(id)
+    setSuccessMessage(null)
     try {
       const { data } = await api.patch(`/admin/users/${id}/status`, { active })
       setUsers(prev => prev.map(user => (user._id === id ? data : user)))
       setConfirmingId(null)
-      toast.success(active ? 'Usuario activado' : 'Usuario desactivado')
+      setSuccessMessage(active ? 'Usuario activado' : 'Usuario desactivado')
     } catch (err) {
       toast.error(getErrorMessage(err))
     } finally {
@@ -109,6 +111,8 @@ const Users = () => {
           </select>
         </div>
       </div>
+
+      {successMessage && <p className="notice">{successMessage}</p>}
 
       {loading && <p className="loading">Cargando usuarios...</p>}
 

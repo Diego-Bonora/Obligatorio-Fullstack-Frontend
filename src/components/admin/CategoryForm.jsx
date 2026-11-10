@@ -1,9 +1,9 @@
 import { useEffect, useId, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { joiResolver } from '@hookform/resolvers/joi'
-import api from '../../../api/api'
-import { getErrorMessage } from '../../../utils/apiError'
-import { categorySchema } from '../../../validators/category.validators'
+import api from '../../api/api'
+import { getErrorMessage } from '../../utils/apiError'
+import { categorySchema } from '../../validators/category.validators'
 
 const CategoryForm = ({ category, onSaved, onCancel, onBusyChange }) => {
   const nameId = useId()

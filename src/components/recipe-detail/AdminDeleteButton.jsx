@@ -1,9 +1,12 @@
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import api from '../../api/api'
+import { setPendingMessage } from '../../features/messages/messages.slice'
 import { getErrorMessage } from '../../utils/apiError'
 
 const AdminDeleteButton = ({ recipeId, onDeleted }) => {
+  const dispatch = useDispatch()
   const [confirming, setConfirming] = useState(false)
   const [deleting, setDeleting] = useState(false)
 
@@ -11,7 +14,7 @@ const AdminDeleteButton = ({ recipeId, onDeleted }) => {
     setDeleting(true)
     try {
       const { data } = await api.delete(`/recipes/${recipeId}`)
-      toast.success(data.message)
+      dispatch(setPendingMessage(data.message))
       onDeleted()
     } catch (error) {
       toast.error(getErrorMessage(error))

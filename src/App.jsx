@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router'
+import { BrowserRouter, Navigate, Routes, Route } from 'react-router'
 import { Provider } from 'react-redux'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -40,7 +40,7 @@ function App() {
               <Route path="profile" element={<ProfilePage />} />
               <Route element={<AdminRoute />}>
                 <Route path="admin" element={<AdminPage />}>
-                 
+                  <Route index element={<Navigate to="categories" replace />} />
                   <Route path="categories" element={<Categories />} />
                   <Route path="reports" element={<Reports />} />
                   <Route path="users" element={<Users />} />

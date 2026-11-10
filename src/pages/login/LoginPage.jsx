@@ -1,4 +1,3 @@
-import { Link } from 'react-router'
 import LoginForm from '../../components/login/LoginForm'
 
 const LoginPage = () => {

@@ -17,7 +17,6 @@ const FollowingList = ({ ids }) => {
     const loadUsers = async () => {
       setLoading(true)
       setError(null)
-      // `following` only holds ids. A 404 is a deactivated account, which is left out of the list.
       const results = await Promise.allSettled(ids.map(id => api.get(`/users/${id}`)))
       if (ignore) return
 
@@ -45,21 +44,32 @@ const FollowingList = ({ ids }) => {
     )
   }
 
-  if (users.length === 0) return <p className="loading">Todavía no seguís a nadie.</p>
+  if (ids.length === 0) return <p className="loading">Todavía no seguís a nadie.</p>
+
+  const unavailable = ids.length - users.length
 
   return (
-    <ul className="following-list">
-      {users.map(user => (
-        <li key={user._id} className="following-item">
-          <span className="avatar small">
-            {user.profilePicture
-              ? <img src={user.profilePicture} alt="" />
-              : user.username[0].toUpperCase()}
-          </span>
-          <span>@{user.username}</span>
-        </li>
-      ))}
-    </ul>
+    <>
+      {users.length > 0 && (
+        <ul className="following-list">
+          {users.map(user => (
+            <li key={user._id} className="following-item">
+              <span className="avatar small">
+                {user.profilePicture
+                  ? <img src={user.profilePicture} alt="" />
+                  : user.username[0].toUpperCase()}
+              </span>
+              <span>@{user.username}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {unavailable > 0 && (
+        <p className="muted small">
+          {unavailable === 1 ? '1 cuenta seguida ya no está disponible.' : `${unavailable} cuentas seguidas ya no están disponibles.`}
+        </p>
+      )}
+    </>
   )
 }
 

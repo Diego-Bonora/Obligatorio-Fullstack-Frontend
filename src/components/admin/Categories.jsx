@@ -6,17 +6,16 @@ import { setCategories } from '../../features/categories/categories.slice'
 import { getErrorMessage } from '../../utils/apiError'
 import Modal from '../shared/Modal'
 import { PencilIcon, PowerIcon } from '../shared/Icons'
-import CategoryForm from './Category/CategoryForm'
+import CategoryForm from './CategoryForm'
 
 const Categories = () => {
   const dispatch = useDispatch()
   const categories = useSelector(state => state.categories.list)
-  // null = closed, { category: null } = create, { category } = edit
   const [modal, setModal] = useState(null)
   const [saving, setSaving] = useState(false)
   const [busyId, setBusyId] = useState(null)
-  // { id, recipesCount } of the category waiting for delete confirmation
   const [deleting, setDeleting] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
 
   const closeModal = useCallback(() => {
     setModal(null)
@@ -35,15 +34,16 @@ const Categories = () => {
   const handleSaved = async () => {
     const isEdit = Boolean(modal.category)
     closeModal()
-    toast.success(isEdit ? 'Categoría actualizada' : 'Categoría creada')
+    setSuccessMessage(isEdit ? 'Categoría actualizada' : 'Categoría creada')
     await reloadCategories()
   }
 
   const toggleActive = async (category) => {
     setBusyId(category._id)
+    setSuccessMessage(null)
     try {
       await api.patch(`/categories/${category._id}`, { active: !category.active })
-      toast.success(category.active ? 'Categoría desactivada' : 'Categoría activada')
+      setSuccessMessage(category.active ? 'Categoría desactivada' : 'Categoría activada')
       await reloadCategories()
     } catch (error) {
       toast.error(getErrorMessage(error))
@@ -66,9 +66,10 @@ const Categories = () => {
 
   const deleteCategory = async (id) => {
     setBusyId(id)
+    setSuccessMessage(null)
     try {
       await api.delete(`/categories/${id}`)
-      toast.success('Categoría eliminada')
+      setSuccessMessage('Categoría eliminada')
       setDeleting(null)
       await reloadCategories()
     } catch (error) {
@@ -119,6 +120,8 @@ const Categories = () => {
           + Nueva categoría
         </button>
       </div>
+
+      {successMessage && <p className="notice">{successMessage}</p>}
 
       {categories.length === 0 && <p className="loading">No hay categorías para mostrar.</p>}
       <ul className="category-list">

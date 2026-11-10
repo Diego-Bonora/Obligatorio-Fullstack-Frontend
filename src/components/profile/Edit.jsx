@@ -27,7 +27,6 @@ const ProfileForm = ({ user, onSaved, onCancel, onBusyChange }) => {
   const previewUrl = useMemo(() => (imageFile ? URL.createObjectURL(imageFile) : null), [imageFile])
   useEffect(() => () => { if (previewUrl) URL.revokeObjectURL(previewUrl) }, [previewUrl])
   const shownImage = previewUrl ?? user.profilePicture
-  // `image` stays dirty after picking a file and then cancelling the picker, so it only counts with a file.
   const hasChanges = Object.keys(dirtyFields).some(field => field !== 'image' || imageFile)
 
   useEffect(() => {
@@ -74,8 +73,7 @@ const ProfileForm = ({ user, onSaved, onCancel, onBusyChange }) => {
       console.error('Error al actualizar el usuario:', error)
     }
 
-    if (!imageFailed) toast.success('Perfil actualizado')
-    onSaved()
+    onSaved(imageFailed ? null : 'Perfil actualizado')
   }
 
   return (
@@ -117,19 +115,27 @@ const Edit = () => {
   const user = useSelector(state => state.auth.user)
   const [open, setOpen] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [successMessage, setSuccessMessage] = useState(null)
 
   const closeModal = useCallback(() => setOpen(false), [])
 
-  const handleSaved = () => {
+  const openModal = () => {
+    setSuccessMessage(null)
+    setOpen(true)
+  }
+
+  const handleSaved = (message) => {
     setOpen(false)
     setSaving(false)
+    setSuccessMessage(message)
   }
 
   return (
     <>
-      <button type="button" className="btn secondary" onClick={() => setOpen(true)}>
+      <button type="button" className="btn secondary" onClick={openModal}>
         <PencilIcon />Editar perfil
       </button>
+      {successMessage && <p className="notice">{successMessage}</p>}
 
       {open && (
         <Modal title="Editar perfil" onClose={saving ? undefined : closeModal}>

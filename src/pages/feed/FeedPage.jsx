@@ -1,8 +1,9 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { joiResolver } from '@hookform/resolvers/joi'
+import { clearPendingMessage } from '../../features/messages/messages.slice'
 import { ingredientSearchSchema } from '../../validators/feed.validators'
 import RecipeFeed from '../../components/feed/RecipeFeed'
 
@@ -47,8 +48,16 @@ const IngredientSearch = ({ defaultValue, onSearch }) => {
 }
 
 const FeedPage = () => {
+  const dispatch = useDispatch()
   const [searchParams, setSearchParams] = useSearchParams()
   const categories = useSelector(state => state.categories.list)
+  const pendingMessage = useSelector(state => state.messages.pending)
+  const [successMessage, setSuccessMessage] = useState(pendingMessage)
+
+  useEffect(() => {
+    dispatch(clearPendingMessage())
+  }, [dispatch])
+
   const query = searchParams.toString()
 
   // one stable object per URL, so the feed's effect doesn't re-run on every render
@@ -56,6 +65,7 @@ const FeedPage = () => {
   const filtersKey = JSON.stringify(filters)
 
   const updateParam = (name, value) => {
+    setSuccessMessage(null)
     const next = new URLSearchParams(searchParams)
     if (value) next.set(name, value)
     else next.delete(name)
@@ -64,6 +74,7 @@ const FeedPage = () => {
   }
 
   const clearFilters = () => {
+    setSuccessMessage(null)
     const next = new URLSearchParams(searchParams)
     FILTER_KEYS.forEach(key => next.delete(key))
     setSearchParams(next)
@@ -74,6 +85,7 @@ const FeedPage = () => {
   return (
     <section className="recipe-list">
       <h1>Inicio</h1>
+      {successMessage && <p className="notice">{successMessage}</p>}
 
       <div className="tabs" role="tablist">
         {tabs.map(tab => (

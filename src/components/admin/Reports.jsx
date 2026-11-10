@@ -28,6 +28,7 @@ const Reports = () => {
     const [reloadCount, setReloadCount] = useState(0)
     const [busyId, setBusyId] = useState(null)
     const [confirmingId, setConfirmingId] = useState(null)
+    const [successMessage, setSuccessMessage] = useState(null)
 
   useEffect(() => {
     let ignore = false
@@ -62,9 +63,10 @@ const Reports = () => {
 
   const resolveReport = async (id, action) => {
     setBusyId(id)
+    setSuccessMessage(null)
     try {
       await api.patch(`/admin/reports/${id}/resolve`, { action })
-      toast.success(action === 'takedown' ? 'Receta dada de baja' : 'Reporte descartado')
+      setSuccessMessage(action === 'takedown' ? 'Receta dada de baja' : 'Reporte descartado')
       setConfirmingId(null)
       if (status === 'pending' && reports.length === 1 && page > 1) setPage(page - 1)
       else reload()
@@ -112,6 +114,8 @@ const Reports = () => {
           </select>
         </div>
       </div>
+
+      {successMessage && <p className="notice">{successMessage}</p>}
 
       {loading && <p className="loading">Cargando reportes...</p>}
 
