@@ -192,6 +192,39 @@ a {
   outline-offset: 1px;
 }
 
+.password-input {
+  position: relative;
+  display: flex;
+}
+
+.password-input input {
+  flex: 1;
+  padding-right: 2.75rem;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: var(--space-xs);
+  transform: translateY(-50%);
+  display: flex;
+  padding: var(--space-xs);
+  border: none;
+  background: transparent;
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.password-toggle:hover {
+  color: var(--color-primary-dark);
+}
+
+.password-toggle .btn-icon {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+}
+
 .error {
   color: var(--color-danger);
   font-size: 0.875rem;

@@ -8,6 +8,7 @@ import { loginSuccess } from '../../features/auth/auth.slice'
 import { setPendingMessage } from '../../features/messages/messages.slice'
 import { getErrorMessage } from '../../utils/apiError'
 import { loginSchema } from '../../validators/auth.validators'
+import PasswordInput from '../shared/PasswordInput'
 
 const LoginForm = () => {
   const dispatch = useDispatch()
@@ -44,7 +45,7 @@ const LoginForm = () => {
 
       <div className="form-group">
         <label htmlFor={passwordId}>Contraseña</label>
-        <input type="password" id={passwordId} autoComplete="current-password" {...register('password')} />
+        <PasswordInput id={passwordId} autoComplete="current-password" {...register('password')} />
         {errors.password && <span className="error">{errors.password.message}</span>}
       </div>
 

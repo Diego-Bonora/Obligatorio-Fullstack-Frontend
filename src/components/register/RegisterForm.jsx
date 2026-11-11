@@ -8,6 +8,7 @@ import { loginSuccess } from '../../features/auth/auth.slice'
 import { setPendingMessage } from '../../features/messages/messages.slice'
 import { getErrorMessage } from '../../utils/apiError'
 import { registerSchema } from '../../validators/auth.validators'
+import PasswordInput from '../shared/PasswordInput'
 
 const RegisterForm = () => {
   const dispatch = useDispatch()
@@ -56,13 +57,13 @@ const RegisterForm = () => {
 
       <div className="form-group">
         <label htmlFor={passwordId}>Contraseña</label>
-        <input type="password" id={passwordId} autoComplete="new-password" {...register('password', { onChange: validatePass })} />
+        <PasswordInput id={passwordId} autoComplete="new-password" {...register('password', { onChange: validatePass })} />
         {errors.password && <span className="error">{errors.password.message}</span>}
       </div>
 
       <div className="form-group">
         <label htmlFor={confirmPasswordId}>Confirmar contraseña</label>
-        <input type="password" id={confirmPasswordId} autoComplete="new-password" {...register('confirmPassword')} />
+        <PasswordInput id={confirmPasswordId} autoComplete="new-password" {...register('confirmPassword')} />
         {errors.confirmPassword && <span className="error">{errors.confirmPassword.message}</span>}
       </div>
 
