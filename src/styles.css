@@ -814,6 +814,11 @@ a.author-link:hover strong {
 .delete-account {
   max-width: 620px;
   margin: var(--space-xl) auto 0;
+  text-align: center;
+}
+
+.delete-account .confirm-inline {
+  justify-content: center;
 }
 
 .btn.link.following-trigger {

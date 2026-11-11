@@ -59,7 +59,9 @@ const FollowingList = ({ ids }) => {
                   ? <img src={user.profilePicture} alt="" />
                   : user.username[0].toUpperCase()}
               </span>
-              <span>@{user.username}</span>
+              <Link to={`/users/${user._id}`} className="user-link">
+                @{user.username}
+              </Link>
             </li>
           ))}
         </ul>
