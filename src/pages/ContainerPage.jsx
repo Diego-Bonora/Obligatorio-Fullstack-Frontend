@@ -6,6 +6,7 @@ import api from '../api/api'
 import { logout, setUser } from '../features/auth/auth.slice'
 import { setCategories } from '../features/categories/categories.slice'
 import { getErrorMessage } from '../utils/apiError'
+import Avatar from '../components/shared/Avatar'
 
 const ContainerPage = () => {
   const dispatch = useDispatch()
@@ -57,10 +58,15 @@ const ContainerPage = () => {
             <NavLink to="/" end>Inicio</NavLink>
             <NavLink to="/users" end>Usuarios</NavLink>
             <NavLink to="/profile">Mi perfil</NavLink>
-            {user?.role === 'admin' && <NavLink to="/admin">Panel de administración</NavLink>}
+            {user?.role === 'admin' && <NavLink to="/admin">Admin</NavLink>}
           </nav>
           <div className="header-user">
-            {user && <span>{user.username}</span>}
+            {user && (
+              <Link to="/profile" className="header-profile">
+                <Avatar user={user} size="small" />
+                <span className="header-username">{user.username}</span>
+              </Link>
+            )}
             <button type="button" className="btn secondary" onClick={handleLogout}>Cerrar sesión</button>
           </div>
         </div>

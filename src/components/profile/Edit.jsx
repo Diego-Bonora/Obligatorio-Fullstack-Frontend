@@ -115,27 +115,20 @@ const Edit = () => {
   const user = useSelector(state => state.auth.user)
   const [open, setOpen] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [successMessage, setSuccessMessage] = useState(null)
 
   const closeModal = useCallback(() => setOpen(false), [])
-
-  const openModal = () => {
-    setSuccessMessage(null)
-    setOpen(true)
-  }
 
   const handleSaved = (message) => {
     setOpen(false)
     setSaving(false)
-    setSuccessMessage(message)
+    toast.success(message)
   }
 
   return (
     <>
-      <button type="button" className="btn secondary" onClick={openModal}>
+      <button type="button" className="btn secondary" onClick={() => setOpen(true)}>
         <PencilIcon />Editar perfil
       </button>
-      {successMessage && <p className="notice">{successMessage}</p>}
 
       {open && (
         <Modal title="Editar perfil" onClose={saving ? undefined : closeModal}>

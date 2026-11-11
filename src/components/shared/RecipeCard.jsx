@@ -1,19 +1,16 @@
 import { Link } from 'react-router'
 import { formatRelativeDate } from '../../utils/date'
 import { difficultyLabels } from '../../utils/labels'
+import AuthorLink from './AuthorLink'
 
 const RecipeCard = ({ recipe, categoryName, children }) => {
   const { _id, title, description, imageUrl, prepTime, difficulty, likesCount, tags = [], author, createdAt } = recipe
-  const username = author?.username ?? 'usuario'
 
   return (
     <article className="card recipe-card">
       <header className="recipe-card-header">
-        <span className="avatar">{username[0].toUpperCase()}</span>
-        <div>
-          <strong>@{username}</strong>
-          <span className="recipe-date"> · {formatRelativeDate(createdAt)}</span>
-        </div>
+        <AuthorLink author={author} />
+        <span className="recipe-date">· {formatRelativeDate(createdAt)}</span>
       </header>
 
       {categoryName && <span className="recipe-category">{categoryName}</span>}

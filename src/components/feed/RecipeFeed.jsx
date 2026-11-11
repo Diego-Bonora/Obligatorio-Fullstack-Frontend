@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router'
 import { useSelector } from 'react-redux'
 import api from '../../api/api'
 import { getErrorMessage } from '../../utils/apiError'
@@ -56,7 +57,8 @@ const RecipeFeed = ({ filters }) => {
   }, [loading, error, hasMore])
 
   const getCategoryName = (id) => categories.find(category => category._id === id)?.name
-  const emptyMessage = filters.feed === 'following'
+  const isFollowingFeed = filters.feed === 'following'
+  const emptyMessage = isFollowingFeed
     ? 'Todavía no seguís a nadie, o las personas que seguís no publicaron recetas.'
     : 'No hay recetas con esos filtros.'
 
@@ -73,7 +75,12 @@ const RecipeFeed = ({ filters }) => {
           <button type="button" className="btn secondary" onClick={() => setRetryCount(prev => prev + 1)}>Reintentar</button>
         </div>
       )}
-      {!loading && !error && !hasMore && recipes.length === 0 && <p className="loading">{emptyMessage}</p>}
+      {!loading && !error && !hasMore && recipes.length === 0 && (
+        <div className="empty-state">
+          <p>{emptyMessage}</p>
+          {isFollowingFeed && <Link to="/users" className="btn primary">Buscar usuarios</Link>}
+        </div>
+      )}
       {!loading && !error && !hasMore && recipes.length > 0 && <p className="loading">No hay más recetas.</p>}
     </>
   )
