@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { joiResolver } from '@hookform/resolvers/joi'
+import { toast } from 'react-toastify'
 import { clearPendingMessage } from '../../features/messages/messages.slice'
 import { ingredientSearchSchema } from '../../validators/feed.validators'
 import RecipeFeed from '../../components/feed/RecipeFeed'
@@ -52,11 +53,12 @@ const FeedPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const categories = useSelector(state => state.categories.list)
   const pendingMessage = useSelector(state => state.messages.pending)
-  const [successMessage, setSuccessMessage] = useState(pendingMessage)
-
+  // fixed toastId: StrictMode runs the effect twice before the clear lands
   useEffect(() => {
+    if (!pendingMessage) return
+    toast.success(pendingMessage, { toastId: 'pending-message' })
     dispatch(clearPendingMessage())
-  }, [dispatch])
+  }, [pendingMessage, dispatch])
 
   const query = searchParams.toString()
 
@@ -65,7 +67,6 @@ const FeedPage = () => {
   const filtersKey = JSON.stringify(filters)
 
   const updateParam = (name, value) => {
-    setSuccessMessage(null)
     const next = new URLSearchParams(searchParams)
     if (value) next.set(name, value)
     else next.delete(name)
@@ -74,7 +75,6 @@ const FeedPage = () => {
   }
 
   const clearFilters = () => {
-    setSuccessMessage(null)
     const next = new URLSearchParams(searchParams)
     FILTER_KEYS.forEach(key => next.delete(key))
     setSearchParams(next)
@@ -85,7 +85,6 @@ const FeedPage = () => {
   return (
     <section className="recipe-list">
       <h1>Inicio</h1>
-      {successMessage && <p className="notice">{successMessage}</p>}
 
       <div className="tabs" role="tablist">
         {tabs.map(tab => (

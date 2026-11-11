@@ -121,6 +121,36 @@ a {
   gap: var(--space-md);
 }
 
+.header-profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  color: var(--color-text);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+@media (max-width: 640px) {
+  .header-content {
+    gap: var(--space-sm) var(--space-md);
+    justify-content: space-between;
+  }
+
+  .main-nav {
+    order: 3;
+    flex-basis: 100%;
+    overflow-x: auto;
+  }
+
+  .header-username {
+    display: none;
+  }
+
+  .header-user .btn {
+    padding: var(--space-xs) var(--space-sm);
+  }
+}
+
 /* Cards and grid */
 .card {
   background: var(--color-surface);
@@ -235,10 +265,35 @@ a {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  overflow: hidden;
   background: var(--color-primary);
   color: #fff;
   font-family: var(--font-heading);
   font-weight: 600;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.author-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  color: inherit;
+  text-decoration: none;
+}
+
+a.author-link:hover strong {
+  text-decoration: underline;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
 }
 
 .recipe-date {
@@ -657,7 +712,8 @@ a {
 
 .comment {
   display: flex;
-  gap: var(--space-sm);
+  flex-direction: column;
+  gap: var(--space-xs);
   padding: var(--space-md) 0;
   border-top: 1px solid var(--color-border);
 }
@@ -983,4 +1039,17 @@ a {
   flex-direction: column;
   align-items: center;
   gap: var(--space-sm);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  color: var(--color-muted);
+  text-align: center;
+}
+
+.empty-state p {
+  margin: 0;
 }

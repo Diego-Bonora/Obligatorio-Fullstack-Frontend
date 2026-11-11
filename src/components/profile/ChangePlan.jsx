@@ -10,16 +10,6 @@ const ChangePlan = () => {
   const plan = useSelector(state => state.auth.user?.plan)
   const [confirming, setConfirming] = useState(false)
   const [changing, setChanging] = useState(false)
-  const [successMessage, setSuccessMessage] = useState(null)
-
-  if (successMessage) {
-    return (
-      <div className="card">
-        <p className="notice">{successMessage}</p>
-      </div>
-    )
-  }
-
   if (plan !== 'plus') return null
 
   const upgrade = async () => {
@@ -27,7 +17,7 @@ const ChangePlan = () => {
     try {
       const { data: me } = await api.patch('/users/me/plan')
       dispatch(setUser(me))
-      setSuccessMessage('¡Ya tenés plan premium!')
+      toast.success('¡Ya tenés plan premium!')
     } catch (error) {
       toast.error(getErrorMessage(error))
       setChanging(false)

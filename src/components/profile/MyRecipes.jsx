@@ -32,6 +32,7 @@ const MyRecipes = () => {
   const [deleting, setDeleting] = useState(false)
 
   const reachedLimit = user?.plan === 'plus' && user.recipesCount >= PLUS_RECIPE_LIMIT
+  const hasFilters = Boolean(filters.category || filters.difficulty)
 
   useEffect(() => {
     if (!userId) return
@@ -135,7 +136,20 @@ const MyRecipes = () => {
       </div>
 
       {loading && <p className="loading">Cargando recetas...</p>}
-      {!loading && recipes.length === 0 && <p className="loading">No hay recetas para mostrar.</p>}
+      {!loading && recipes.length === 0 && (
+        hasFilters
+          ? <p className="loading">No hay recetas con esos filtros.</p>
+          : (
+            <div className="empty-state">
+              <p>Todavía no publicaste recetas.</p>
+              {!reachedLimit && (
+                <button type="button" className="btn primary" disabled={!user} onClick={() => setModal({ recipe: null })}>
+                  + Nueva receta
+                </button>
+              )}
+            </div>
+          )
+      )}
       {!loading && recipes.map(recipe => (
         <RecipeCard key={recipe._id} recipe={recipe} categoryName={getCategoryName(recipe.category)}>
           {deletingId === recipe._id

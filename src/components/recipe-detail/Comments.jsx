@@ -7,9 +7,10 @@ import api from '../../api/api'
 import { getErrorMessage } from '../../utils/apiError'
 import { formatRelativeDate } from '../../utils/date'
 import { commentSchema } from '../../validators/comment.validators'
+import AuthorLink from '../shared/AuthorLink'
 
 const Comments = ({ recipeId }) => {
-  const username = useSelector(state => state.auth.user?.username)
+  const user = useSelector(state => state.auth.user)
   const [comments, setComments] = useState([])
   const [meta, setMeta] = useState(null)
   const [page, setPage] = useState(1)
@@ -51,7 +52,7 @@ const Comments = ({ recipeId }) => {
     try {
       const { data } = await api.post(`/recipes/${recipeId}/comments`, { text })
       // the POST answer has the author id only, and the author is me
-      setComments(prev => [{ ...data.comment, author: { _id: data.comment.author, username } }, ...prev])
+      setComments(prev => [{ ...data.comment, author: { _id: data.comment.author, username: user.username, profilePicture: user.profilePicture } }, ...prev])
       setMeta(prev => prev && { ...prev, total: prev.total + 1 })
       reset()
     } catch (error) {
@@ -78,18 +79,15 @@ const Comments = ({ recipeId }) => {
 
       {!loading && comments.length === 0 && <p className="muted">Todavía no hay comentarios. ¡Sé el primero!</p>}
       <ul className="comment-list">
-        {comments.map(comment => {
-          const author = comment.author?.username ?? 'usuario'
-          return (
-            <li key={comment._id} className="comment">
-              <span className="avatar small">{author[0].toUpperCase()}</span>
-              <div>
-                <p className="comment-header"><strong>@{author}</strong> <span className="muted">· {formatRelativeDate(comment.createdAt)}</span></p>
-                <p className="comment-text">{comment.text}</p>
-              </div>
-            </li>
-          )
-        })}
+        {comments.map(comment => (
+          <li key={comment._id} className="comment">
+            <p className="comment-header">
+              <AuthorLink author={comment.author} size="small" />
+              <span className="muted">· {formatRelativeDate(comment.createdAt)}</span>
+            </p>
+            <p className="comment-text">{comment.text}</p>
+          </li>
+        ))}
       </ul>
 
       {loading && <p className="loading">Cargando comentarios...</p>}

@@ -15,7 +15,6 @@ const Categories = () => {
   const [saving, setSaving] = useState(false)
   const [busyId, setBusyId] = useState(null)
   const [deleting, setDeleting] = useState(null)
-  const [successMessage, setSuccessMessage] = useState(null)
 
   const closeModal = useCallback(() => {
     setModal(null)
@@ -34,16 +33,15 @@ const Categories = () => {
   const handleSaved = async () => {
     const isEdit = Boolean(modal.category)
     closeModal()
-    setSuccessMessage(isEdit ? 'Categoría actualizada' : 'Categoría creada')
+    toast.success(isEdit ? 'Categoría actualizada' : 'Categoría creada')
     await reloadCategories()
   }
 
   const toggleActive = async (category) => {
     setBusyId(category._id)
-    setSuccessMessage(null)
     try {
       await api.patch(`/categories/${category._id}`, { active: !category.active })
-      setSuccessMessage(category.active ? 'Categoría desactivada' : 'Categoría activada')
+      toast.success(category.active ? 'Categoría desactivada' : 'Categoría activada')
       await reloadCategories()
     } catch (error) {
       toast.error(getErrorMessage(error))
@@ -66,10 +64,9 @@ const Categories = () => {
 
   const deleteCategory = async (id) => {
     setBusyId(id)
-    setSuccessMessage(null)
     try {
       await api.delete(`/categories/${id}`)
-      setSuccessMessage('Categoría eliminada')
+      toast.success('Categoría eliminada')
       setDeleting(null)
       await reloadCategories()
     } catch (error) {
@@ -120,8 +117,6 @@ const Categories = () => {
           + Nueva categoría
         </button>
       </div>
-
-      {successMessage && <p className="notice">{successMessage}</p>}
 
       {categories.length === 0 && <p className="loading">No hay categorías para mostrar.</p>}
       <ul className="category-list">

@@ -10,6 +10,7 @@ import ReportButton from '../../components/recipe-detail/ReportButton'
 import AdminDeleteButton from '../../components/recipe-detail/AdminDeleteButton'
 import Substitutions from '../../components/recipe-detail/Substitutions'
 import Comments from '../../components/recipe-detail/Comments'
+import AuthorLink from '../../components/shared/AuthorLink'
 
 const RecipeDetailPage = () => {
   const { id } = useParams()
@@ -57,7 +58,6 @@ const RecipeDetailPage = () => {
   }
   if (!recipe) return <p className="loading">Cargando receta...</p>
 
-  const username = recipe.author?.username ?? 'usuario'
   const isOwner = Boolean(userId) && recipe.author?._id === userId
   const categoryName = categories.find(category => category._id === recipe.category)?.name
   const handleLikeChange = (likedByMe, likesCount) => setRecipe(prev => ({ ...prev, likedByMe, likesCount }))
@@ -68,11 +68,8 @@ const RecipeDetailPage = () => {
 
       <article className="card recipe-detail">
         <header className="recipe-card-header">
-          <span className="avatar">{username[0].toUpperCase()}</span>
-          <div>
-            <strong>@{username}</strong>
-            <span className="recipe-date"> · {formatRelativeDate(recipe.createdAt)}</span>
-          </div>
+          <AuthorLink author={recipe.author} />
+          <span className="recipe-date">· {formatRelativeDate(recipe.createdAt)}</span>
         </header>
 
         {categoryName && <span className="recipe-category">{categoryName}</span>}
