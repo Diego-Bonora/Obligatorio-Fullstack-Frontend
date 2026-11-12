@@ -10,7 +10,7 @@ const FeedFilters = ({ filters, onChange, onClear }) => {
   const categories = useSelector(state => state.categories.list)
   const [sheetOpen, setSheetOpen] = useState(false)
   const categoryList = categoryOptions(categories)
-  const hasFilters = ['category', 'difficulty', 'maxTime', 'ingredient', 'tags'].some(key => filters[key])
+  const hasFilters = ['category', 'difficulty', 'maxTime', 'ingredient', 'q', 'tags'].some(key => filters[key])
 
   return (
     <div className="feed-filters">
@@ -19,6 +19,11 @@ const FeedFilters = ({ filters, onChange, onClear }) => {
         <SlidersIcon size={16} className="" />Filtros
       </button>
 
+      {filters.q && (
+        <button type="button" className="chip active" aria-label={`Quitar búsqueda: ${filters.q}`} onClick={() => onChange('q', '')}>
+          “{filters.q}”<CloseIcon size={16} strokeWidth={2.5} className="" />
+        </button>
+      )}
       {filters.ingredient && (
         <button type="button" className="chip active" aria-label={`Quitar ingrediente: ${filters.ingredient}`} onClick={() => onChange('ingredient', '')}>
           Con {filters.ingredient}<CloseIcon size={16} strokeWidth={2.5} className="" />

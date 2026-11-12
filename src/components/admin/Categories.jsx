@@ -130,7 +130,7 @@ const Categories = () => {
                 <span className={`badge ${category.active ? 'success' : ''}`}>{category.active ? 'Activa' : 'Inactiva'}</span>
               </div>
             </div>
-            <div className="admin-item-actions">{renderActions(category)}</div>
+            <div className="admin-item-actions category-actions">{renderActions(category)}</div>
           </li>
         ))}
       </ul>

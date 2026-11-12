@@ -4,7 +4,7 @@ import { SearchIcon } from '../shared/Icons'
 
 const MAX_LENGTH = 50
 
-// Uses the ingredient search that the feed already has (?ingredient=...).
+// Searches the feed by title or ingredient (?q=...).
 const HeaderSearchForm = ({ initialValue, autoFocus, onSearched }) => {
   const navigate = useNavigate()
   const location = useLocation()
@@ -12,11 +12,11 @@ const HeaderSearchForm = ({ initialValue, autoFocus, onSearched }) => {
 
   const search = (event) => {
     event.preventDefault()
-    const ingredient = value.trim()
-    // on the feed, keep the current tab and filters and only change the ingredient
+    const text = value.trim()
+    // on the feed, keep the current tab and filters and only change the search
     const params = new URLSearchParams(location.pathname === '/' ? location.search : '')
-    if (ingredient) params.set('ingredient', ingredient)
-    else params.delete('ingredient')
+    if (text) params.set('q', text)
+    else params.delete('q')
     const query = params.toString()
     navigate(query ? `/?${query}` : '/')
     onSearched?.()
@@ -27,8 +27,8 @@ const HeaderSearchForm = ({ initialValue, autoFocus, onSearched }) => {
       <SearchIcon size={18} className="header-search-icon" />
       <input
         type="search"
-        aria-label="Buscar recetas por ingrediente"
-        placeholder="Buscá recetas por ingrediente"
+        aria-label="Buscar recetas por nombre o ingrediente"
+        placeholder="Buscá recetas o ingredientes"
         maxLength={MAX_LENGTH}
         value={value}
         autoFocus={autoFocus}
@@ -41,9 +41,9 @@ const HeaderSearchForm = ({ initialValue, autoFocus, onSearched }) => {
 const HeaderSearch = (props) => {
   const [searchParams] = useSearchParams()
   const location = useLocation()
-  const current = location.pathname === '/' ? (searchParams.get('ingredient') ?? '') : ''
+  const current = location.pathname === '/' ? (searchParams.get('q') ?? '') : ''
 
-  // the key resets the input when the ingredient changes from somewhere else (chips, "Limpiar filtros")
+  // the key resets the input when the search changes from somewhere else (its chip, "Limpiar filtros")
   return <HeaderSearchForm key={current} initialValue={current} {...props} />
 }
 

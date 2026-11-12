@@ -14,7 +14,7 @@ const tabs = [
   { value: 'popular', label: 'Populares' }
 ]
 
-const FILTER_KEYS = ['category', 'difficulty', 'maxTime', 'ingredient', 'tags']
+const FILTER_KEYS = ['category', 'difficulty', 'maxTime', 'ingredient', 'q', 'tags']
 
 // The API answers 400 to any unknown or invalid query key, so links with extra
 // params (e.g. ?fbclid=... added by social apps) would break the feed.
@@ -24,12 +24,14 @@ const pickFilters = (params) => {
   const difficulty = params.get('difficulty')
   const maxTime = params.get('maxTime')
   const ingredient = params.get('ingredient')?.trim()
+  const q = params.get('q')?.trim()
   const tags = params.get('tags')?.trim()
 
   if (/^[a-f0-9]{24}$/.test(category)) filters.category = category
   if (['easy', 'medium', 'hard'].includes(difficulty)) filters.difficulty = difficulty
   if (['15', '30', '60'].includes(maxTime)) filters.maxTime = maxTime
   if (ingredient && ingredient.length <= 50) filters.ingredient = ingredient
+  if (q && q.length <= 50) filters.q = q
   if (tags && tags.length <= 200) filters.tags = tags
   return filters
 }

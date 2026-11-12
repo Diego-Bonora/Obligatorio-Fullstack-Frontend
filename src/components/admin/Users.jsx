@@ -129,7 +129,7 @@ const Users = () => {
               <Avatar user={user} />
               <div className="admin-item-info">
                 <h3>@{user.username}</h3>
-                <p className="muted">{user.email} · {user.recipesCount} {user.recipesCount === 1 ? 'receta' : 'recetas'}</p>
+                <p className="muted">{user.email} · <span className="nowrap">{user.recipesCount} {user.recipesCount === 1 ? 'receta' : 'recetas'}</span></p>
                 <div className="badges">
                   <span className={`badge ${user.plan === 'premium' ? 'success' : ''}`}>{planLabels[user.plan] ?? user.plan}</span>
                   {user.role === 'admin' && <span className="badge dark">{roleLabels.admin}</span>}

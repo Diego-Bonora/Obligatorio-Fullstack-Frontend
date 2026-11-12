@@ -103,12 +103,6 @@ a:hover {
   }
 }
 
-.narrow-page {
-  max-width: 420px;
-  margin-top: var(--space-xl);
-  text-align: center;
-}
-
 .loading {
   color: var(--color-muted);
   text-align: center;
@@ -503,7 +497,8 @@ a:hover {
   text-align: left;
 }
 
-.form-group label {
+.form-group label,
+.form-label {
   font-size: 0.875rem;
   font-weight: 700;
 }
@@ -727,8 +722,9 @@ textarea:focus,
 
 .recipe-card-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-sm);
+  gap: 2px var(--space-sm);
 }
 
 .avatar {
@@ -772,6 +768,7 @@ a.author-link:hover strong {
 
 .recipe-date {
   color: var(--color-muted);
+  white-space: nowrap;
 }
 
 .recipe-category {
@@ -783,9 +780,16 @@ a.author-link:hover strong {
 
 .recipe-meta {
   display: flex;
-  gap: var(--space-lg);
+  flex-wrap: wrap;
+  gap: var(--space-sm) var(--space-lg);
   color: var(--color-muted);
   font-size: 0.9rem;
+}
+
+.recipe-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .tags {
@@ -818,6 +822,10 @@ a.author-link:hover strong {
   justify-content: center;
   gap: var(--space-md);
   margin-top: var(--space-lg);
+}
+
+.pagination span {
+  white-space: nowrap;
 }
 
 .form-row {
@@ -896,11 +904,132 @@ a.author-link:hover strong {
   text-decoration: underline;
 }
 
-.image-preview {
-  max-width: 100%;
-  max-height: 260px;
-  object-fit: cover;
+/* Image picker (profile picture and recipe image): the preview and the button open the hidden input */
+.image-input {
+  display: flex;
+  gap: 16px;
+}
+
+.image-input.round {
+  align-items: center;
+}
+
+.image-input.wide {
+  flex-direction: column;
+}
+
+.image-input-preview {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px dashed #9AA19D;
+  background: var(--color-bg);
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.round .image-input-preview {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+}
+
+.wide .image-input-preview {
+  width: 100%;
+  height: 200px;
   border-radius: var(--radius);
+}
+
+.image-input-preview.has-image {
+  border-style: solid;
+  border-color: var(--color-border);
+}
+
+.image-input-preview:hover,
+.image-input input:focus-visible + .image-input-preview {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.image-input input:focus-visible + .image-input-preview {
+  box-shadow: var(--focus-ring);
+}
+
+/* No overflow: hidden on the preview, or it would clip the badge: the image takes the rounded corners instead */
+.image-input-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+.image-input-badge {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: var(--shadow);
+}
+
+.round .image-input-badge {
+  right: 0;
+  bottom: 0;
+}
+
+.image-input-initial {
+  font-family: var(--font-heading);
+  font-size: 2.25rem;
+  font-weight: 600;
+}
+
+.image-input-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.image-input-info {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  overflow-wrap: anywhere;
+}
+
+.round .image-input-info {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.image-input-info .btn {
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.image-input-clear {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-danger);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .section-header {
@@ -1364,6 +1493,31 @@ a.author-link:hover strong {
   font-size: 1.6rem;
 }
 
+/* Login: the content block sits centered in the panel, like the form on the right */
+.auth-showcase-content {
+  flex: 1;
+  width: 100%;
+  max-width: 480px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 32px;
+}
+
+.auth-showcase .avatar {
+  background: var(--tile-peach);
+  color: var(--color-text);
+}
+
+.avatar-stack .avatar {
+  border: 2px solid var(--color-primary);
+}
+
+.avatar-stack .avatar + .avatar {
+  margin-left: -10px;
+}
+
 .auth-hero {
   max-width: 480px;
   display: flex;
@@ -1388,46 +1542,15 @@ a.author-link:hover strong {
   line-height: 1.35;
 }
 
-.mock-avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  color: var(--color-text);
-  font-size: 0.75rem;
-  font-weight: 800;
-}
-
-.mock-avatar.tiny {
-  width: 24px;
-  height: 24px;
-  font-size: 0.625rem;
-}
-
 .avatar-stack {
   display: flex;
   flex-shrink: 0;
-}
-
-.avatar-stack .mock-avatar {
-  border: 2px solid var(--color-primary);
-}
-
-.avatar-stack .mock-avatar + .mock-avatar {
-  margin-left: -10px;
 }
 
 .tone-peach { background: var(--tile-peach); color: #7A3E1D; }
 .tone-butter { background: var(--tile-butter); color: #6B5310; }
 .tone-mint { background: var(--tile-mint); color: #1F5A36; }
 .tone-rose { background: var(--tile-rose); color: #6B2E55; }
-.mock-avatar.tone-peach,
-.mock-avatar.tone-butter,
-.mock-avatar.tone-mint,
-.mock-avatar.tone-rose { color: var(--color-text); }
 
 .auth-feed {
   max-width: 520px;
@@ -1444,8 +1567,17 @@ a.author-link:hover strong {
   box-shadow: var(--shadow-raised);
 }
 
-.showcase-card.offset {
-  margin-top: 36px;
+.auth-feed .showcase-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-feed .showcase-card-body {
+  flex: 1;
+}
+
+.auth-feed .showcase-card-meta {
+  margin-top: auto;
 }
 
 .showcase-card.featured {
@@ -1463,6 +1595,14 @@ a.author-link:hover strong {
 
 .featured .showcase-card-image {
   height: 170px;
+}
+
+.showcase-card-image img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .showcase-badge {
@@ -1499,9 +1639,10 @@ a.author-link:hover strong {
 
 .showcase-card-meta {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-sm);
+  gap: 4px var(--space-sm);
 }
 
 .showcase-author {
@@ -1512,8 +1653,7 @@ a.author-link:hover strong {
   font-size: 0.8125rem;
 }
 
-.showcase-likes,
-.showcase-comments {
+.showcase-likes {
   display: flex;
   align-items: center;
   gap: 4px;
@@ -1522,7 +1662,17 @@ a.author-link:hover strong {
 }
 
 .showcase-likes { color: var(--color-accent); }
-.showcase-comments { color: var(--color-muted); }
+.showcase-date {
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.showcase-author .avatar {
+  width: 24px;
+  height: 24px;
+  font-size: 0.625rem;
+}
 
 .auth-activity {
   max-width: 460px;
@@ -1541,6 +1691,11 @@ a.author-link:hover strong {
   padding: 12px 14px;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.12);
+}
+
+.auth-activity small {
+  white-space: nowrap;
+  opacity: 0.75;
 }
 
 /* Mobile-only pieces */
@@ -1612,6 +1767,10 @@ a.author-link:hover strong {
 
   .auth-showcase .logo-name {
     font-size: 1.35rem;
+  }
+
+  .auth-showcase-content {
+    display: contents;
   }
 
   .auth-hero,
@@ -1694,7 +1853,7 @@ a.author-link:hover strong {
     box-shadow: var(--shadow);
   }
 
-  .auth-community-card .avatar-stack .mock-avatar {
+  .auth-community-card .avatar-stack .avatar {
     border-color: var(--color-surface);
   }
 
@@ -1745,14 +1904,6 @@ a.author-link:hover strong {
   padding: 0 16px;
   border-radius: var(--radius-pill);
   font-size: 0.875rem;
-}
-
-.btn.pill.primary {
-  background: var(--color-text);
-}
-
-.btn.pill.primary:hover:not(:disabled) {
-  background: #000;
 }
 
 /* Welcome (step 2 of the sign up) */
@@ -2762,9 +2913,10 @@ button.profile-counter:focus-visible {
   width: 100%;
 }
 
+/* Fixed columns: pages hold 6 recipes, so 3 (or 2 on tablets) always fill whole rows */
 .compact-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -3409,5 +3561,125 @@ button.profile-counter:focus-visible {
 
   .admin-item-actions .confirm-inline {
     justify-content: flex-start;
+  }
+}
+
+/* Loading placeholders (login/register showcase) */
+@keyframes skeleton-pulse {
+  50% { opacity: 0.45; }
+}
+
+.skeleton,
+.skeleton-line {
+  background: var(--color-border);
+  animation: skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.skeleton-line {
+  display: block;
+  height: 12px;
+  border-radius: var(--radius-pill);
+}
+
+.auth-activity .skeleton,
+.auth-activity .skeleton-line {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton,
+  .skeleton-line {
+    animation: none;
+  }
+}
+
+@media (max-width: 380px) {
+  .compact-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Phones: "Anterior", "Página X de Y" and "Siguiente" must fit in one row */
+@media (max-width: 767px) {
+  .pagination {
+    gap: var(--space-sm);
+  }
+
+  .pagination .btn {
+    padding-inline: var(--space-md);
+  }
+}
+
+/* 404: outside the layout (no header or bottom nav), so it carries its own logo */
+.not-found {
+  min-height: 100vh;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  text-align: center;
+}
+
+.not-found > a:first-child {
+  margin-bottom: var(--space-lg);
+  color: inherit;
+  text-decoration: none;
+}
+
+.not-found-tile {
+  width: 112px;
+  height: 112px;
+  border-radius: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-4deg);
+}
+
+.not-found h1 {
+  margin: 0;
+}
+
+.not-found p {
+  margin: 0 0 var(--space-sm);
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+/* Admin panel on phones */
+@media (max-width: 767px) {
+  /* the 4 sections always visible: a 2x2 grid instead of a row that scrolls with a hidden scrollbar */
+  .admin-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+  }
+
+  /* Editar, Desactivar and Eliminar share one row */
+  .category-actions {
+    flex-wrap: nowrap;
+  }
+
+  .category-actions > .btn {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 40px;
+    padding-inline: 8px;
+    font-size: 0.875rem;
+  }
+
+  /* the total on its own row, Plus and Premium below */
+  .stat-tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stat-tiles .stat-primary {
+    grid-column: 1 / -1;
   }
 }

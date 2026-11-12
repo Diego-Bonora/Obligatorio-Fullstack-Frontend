@@ -11,6 +11,7 @@ import AdminDeleteButton from '../../components/recipe-detail/AdminDeleteButton'
 import Substitutions from '../../components/recipe-detail/Substitutions'
 import Comments from '../../components/recipe-detail/Comments'
 import AuthorLink from '../../components/shared/AuthorLink'
+import { ClockIcon, UsersIcon } from '../../components/shared/Icons'
 
 const RecipeDetailPage = () => {
   const { id } = useParams()
@@ -69,7 +70,7 @@ const RecipeDetailPage = () => {
       <article className="card recipe-detail">
         <header className="recipe-card-header">
           <AuthorLink author={recipe.author} />
-          <span className="recipe-date">· {formatRelativeDate(recipe.createdAt)}</span>
+          <span className="recipe-date">{formatRelativeDate(recipe.createdAt)}</span>
         </header>
 
         {categoryName && <span className="recipe-category">{categoryName}</span>}
@@ -78,8 +79,8 @@ const RecipeDetailPage = () => {
         {recipe.imageUrl && <img className="recipe-detail-image" src={recipe.imageUrl} alt={recipe.title} />}
 
         <div className="recipe-meta">
-          <span>⏱ {recipe.prepTime} min</span>
-          <span>🍽 {recipe.servings} {recipe.servings === 1 ? 'porción' : 'porciones'}</span>
+          <span><ClockIcon size={16} className="" />{recipe.prepTime} min</span>
+          <span><UsersIcon size={16} className="" />{recipe.servings} {recipe.servings === 1 ? 'porción' : 'porciones'}</span>
           <span>{difficultyLabels[recipe.difficulty]}</span>
         </div>
 

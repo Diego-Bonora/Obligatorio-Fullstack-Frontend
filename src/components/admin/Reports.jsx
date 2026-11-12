@@ -151,9 +151,12 @@ const Reports = () => {
               <span className="admin-item-icon tone-peach"><FlagIcon size={20} className="" /></span>
               <div className="admin-item-info">
                 <h3>
-                  {report.recipe
-                    ? <Link to={`/recipes/${report.recipe._id}`}>{report.recipe.title}</Link>
-                    : <span className="muted">Receta no disponible</span>}
+                  {/* a taken-down recipe is inactive: its page would answer "Receta no encontrada" */}
+                  {!report.recipe
+                    ? <span className="muted">Receta no disponible</span>
+                    : report.status === 'reviewed'
+                      ? report.recipe.title
+                      : <Link to={`/recipes/${report.recipe._id}`}>{report.recipe.title}</Link>}
                 </h3>
                 <p className="muted">Reportada por @{report.reportedBy?.username ?? 'usuario'} · {formatRelativeDate(report.createdAt)}</p>
                 {report.details && <blockquote className="admin-quote">{report.details}</blockquote>}
