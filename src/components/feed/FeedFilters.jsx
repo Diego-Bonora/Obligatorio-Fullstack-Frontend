@@ -34,9 +34,12 @@ const FeedFilters = ({ filters, onChange, onClear }) => {
           #{filters.tags}<CloseIcon size={16} strokeWidth={2.5} className="" />
         </button>
       )}
-      <FilterChip label="Categoría" options={categoryList} value={filters.category ?? ''} onChange={value => onChange('category', value)} />
-      <FilterChip label="Dificultad" options={difficultyOptions} value={filters.difficulty ?? ''} onChange={value => onChange('difficulty', value)} />
-      <FilterChip label="Tiempo" options={timeOptions} value={filters.maxTime ?? ''} onChange={value => onChange('maxTime', value)} />
+      {/* On phones the empty ones are picked in the sheet; only the active ones stay here to remove them */}
+      <span className="feed-filter-chips">
+        <FilterChip label="Categoría" options={categoryList} value={filters.category ?? ''} onChange={value => onChange('category', value)} />
+        <FilterChip label="Dificultad" options={difficultyOptions} value={filters.difficulty ?? ''} onChange={value => onChange('difficulty', value)} />
+        <FilterChip label="Tiempo" options={timeOptions} value={filters.maxTime ?? ''} onChange={value => onChange('maxTime', value)} />
+      </span>
 
       {hasFilters && (
         <>

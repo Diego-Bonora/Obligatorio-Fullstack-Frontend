@@ -2428,6 +2428,10 @@ a.author-link:hover strong {
   display: none;
 }
 
+.feed-filter-chips {
+  display: contents;
+}
+
 .filters-spacer {
   flex: 1;
 }
@@ -2700,6 +2704,10 @@ a.suggested-name:hover {
 
   .filters-sheet-trigger {
     display: inline-flex;
+  }
+
+  .feed-filter-chips > :not(.chip.active) {
+    display: none;
   }
 
   .filters-spacer {
