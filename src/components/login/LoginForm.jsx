@@ -1,7 +1,7 @@
 import { useId, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
-import { Link, useNavigate } from 'react-router'
+import { Link } from 'react-router'
 import { joiResolver } from '@hookform/resolvers/joi'
 import api from '../../api/api'
 import { loginSuccess } from '../../features/auth/auth.slice'
@@ -12,7 +12,6 @@ import PasswordInput from '../shared/PasswordInput'
 
 const LoginForm = () => {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
   const usernameId = useId()
   const passwordId = useId()
   const [serverError, setServerError] = useState(null)
@@ -27,38 +26,49 @@ const LoginForm = () => {
     try {
       const { data } = await api.post('/auth/login', credentials)
       dispatch(setPendingMessage(data.message))
+      // PublicOnlyRoute sees the token and redirects to the feed
       dispatch(loginSuccess(data.token))
-      navigate('/', { replace: true })
     } catch (error) {
       setServerError(getErrorMessage(error))
     }
   }
 
   return (
-    <>
-    <form onSubmit={handleSubmit(handleLogin)}>
+    <form className="auth-form" onSubmit={handleSubmit(handleLogin)}>
+      <div className="auth-form-header">
+        <h1>¡Hola de nuevo!</h1>
+        <p>Ingresá para ver qué cocinaron tus amigos.</p>
+      </div>
+
       <div className="form-group">
         <label htmlFor={usernameId}>Usuario</label>
-        <input type="text" id={usernameId} autoComplete="username" {...register('username')} />
+        <input
+          type="text"
+          id={usernameId}
+          autoComplete="username"
+          placeholder="tu.usuario"
+          aria-invalid={!!errors.username}
+          {...register('username')}
+        />
         {errors.username && <span className="error">{errors.username.message}</span>}
       </div>
 
       <div className="form-group">
         <label htmlFor={passwordId}>Contraseña</label>
-        <PasswordInput id={passwordId} autoComplete="current-password" {...register('password')} />
+        <PasswordInput id={passwordId} autoComplete="current-password" aria-invalid={!!errors.password} {...register('password')} />
         {errors.password && <span className="error">{errors.password.message}</span>}
       </div>
 
-      {serverError && <p className="error">{serverError}</p>}
+      {serverError && <p className="error" role="alert">{serverError}</p>}
 
-      <button type="submit" className="btn primary" disabled={!isValid || isSubmitting}>
+      <button type="submit" className="btn primary block" disabled={!isValid || isSubmitting}>
         {isSubmitting ? 'Ingresando...' : 'Ingresar'}
       </button>
+
+      <p className="auth-switch">
+        ¿No tenés cuenta? <Link to="/register">Creá una gratis</Link>
+      </p>
     </form>
-    <p className="register-link">
-      ¿No tenés cuenta? <Link to="/register">Registrate acá</Link>
-    </p>
-    </>
   )
 }
 

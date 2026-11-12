@@ -15,3 +15,7 @@ export const formatRelativeDate = (date) => {
   }
   return 'recién'
 }
+
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000
+
+export const isWithinLastWeek = (date) => Date.now() - new Date(date) < WEEK_MS

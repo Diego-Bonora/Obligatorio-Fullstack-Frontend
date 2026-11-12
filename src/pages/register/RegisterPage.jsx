@@ -1,11 +1,11 @@
+import AuthLayout from '../../components/auth/AuthLayout'
 import RegisterForm from '../../components/register/RegisterForm'
 
 const RegisterPage = () => {
   return (
-    <div className="container auth-container">
-      <h1>Crear cuenta</h1>
+    <AuthLayout variant="register">
       <RegisterForm />
-    </div>
+    </AuthLayout>
   )
 }
 

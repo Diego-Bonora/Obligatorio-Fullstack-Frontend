@@ -81,8 +81,9 @@ const Following = () => {
 
   return (
     <>
-      <button type="button" className="btn link following-trigger" onClick={() => setOpen(true)}>
-        <strong>{following.length}</strong> seguidos
+      <button type="button" className="profile-counter" onClick={() => setOpen(true)}>
+        <b>{following.length}</b>
+        <span>seguidos</span>
       </button>
 
       {open && (

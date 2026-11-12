@@ -6,7 +6,7 @@ const PasswordInput = (props) => {
   const [visible, setVisible] = useState(false)
 
   return (
-    <div className="password-input">
+    <div className="input-shell password-input">
       <input {...props} type={visible ? 'text' : 'password'} />
       <button
         type="button"

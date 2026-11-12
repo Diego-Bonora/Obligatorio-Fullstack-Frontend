@@ -4,8 +4,13 @@ import { toast } from 'react-toastify'
 import api from '../../api/api'
 import { getErrorMessage } from '../../utils/apiError'
 import Pagination from '../shared/Pagination'
+import Avatar from '../shared/Avatar'
+import FilterChip from '../shared/FilterChip'
 
 const roleLabels = { user: 'Usuario', admin: 'Administrador' }
+const planLabels = { plus: 'Plus', premium: 'Premium' }
+const planOptions = [{ value: 'plus', label: 'Plus' }, { value: 'premium', label: 'Premium' }]
+const roleOptions = [{ value: 'user', label: 'Usuarios' }, { value: 'admin', label: 'Administradores' }]
 
 const Users = () => {
   const currentUserId = useSelector(state => state.auth.user?._id)
@@ -46,8 +51,8 @@ const Users = () => {
     return () => { ignore = true }
   }, [plan, role, page, reloadCount])
 
-  const handleFilterChange = (setFilter) => (event) => {
-    setFilter(event.target.value)
+  const handleFilterChange = (setFilter) => (value) => {
+    setFilter(value)
     setPage(1)
     setConfirmingId(null)
   }
@@ -96,20 +101,12 @@ const Users = () => {
 
   return (
     <section className="admin-section">
-      <div className="section-header">
-        <h2>Usuarios{meta && ` (${meta.total})`}</h2>
-        <div className="filters">
-          <select value={plan} onChange={handleFilterChange(setPlan)} aria-label="Filtrar por plan">
-            <option value="">Todos los planes</option>
-            <option value="plus">Plus</option>
-            <option value="premium">Premium</option>
-          </select>
-          <select value={role} onChange={handleFilterChange(setRole)} aria-label="Filtrar por rol">
-            <option value="">Todos los roles</option>
-            <option value="user">Usuarios</option>
-            <option value="admin">Administradores</option>
-          </select>
-        </div>
+      <div className="admin-section-header">
+        <h2>Usuarios{meta && <span className="count">{meta.total}</span>}</h2>
+      </div>
+      <div className="admin-toolbar">
+        <FilterChip label="Plan" options={planOptions} value={plan} onChange={handleFilterChange(setPlan)} />
+        <FilterChip label="Rol" options={roleOptions} value={role} onChange={handleFilterChange(setRole)} />
       </div>
 
       {successMessage && <p className="notice">{successMessage}</p>}
@@ -125,18 +122,21 @@ const Users = () => {
 
       {!loading && !error && users.length === 0 && <p className="loading">No hay usuarios para mostrar.</p>}
 
-      {!error && (
-        <ul className="category-list">
+      {!error && !loading && users.length > 0 && (
+        <ul className="admin-list">
           {users.map(user => (
-            <li key={user._id} className="card category-item">
-              <div>
+            <li key={user._id} className={`admin-item${user.active ? '' : ' inactive'}`}>
+              <Avatar user={user} />
+              <div className="admin-item-info">
                 <h3>@{user.username}</h3>
-                <p>{user.email}</p>
-                <span className="category-status">
-                  Plan {user.plan} · {roleLabels[user.role] ?? user.role} · {user.recipesCount} {user.recipesCount === 1 ? 'receta' : 'recetas'} · {user.active ? 'Activo' : 'Inactivo'}
-                </span>
+                <p className="muted">{user.email} · <span className="nowrap">{user.recipesCount} {user.recipesCount === 1 ? 'receta' : 'recetas'}</span></p>
+                <div className="badges">
+                  <span className={`badge ${user.plan === 'premium' ? 'success' : ''}`}>{planLabels[user.plan] ?? user.plan}</span>
+                  {user.role === 'admin' && <span className="badge dark">{roleLabels.admin}</span>}
+                  <span className={`badge ${user.active ? 'success' : 'danger'}`}>{user.active ? 'Activo' : 'Inactivo'}</span>
+                </div>
               </div>
-              <div className="category-actions">{renderActions(user)}</div>
+              <div className="admin-item-actions">{renderActions(user)}</div>
             </li>
           ))}
         </ul>

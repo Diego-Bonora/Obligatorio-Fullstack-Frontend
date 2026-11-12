@@ -8,6 +8,7 @@ import { setUser } from '../../features/auth/auth.slice'
 import { getErrorMessage } from '../../utils/apiError'
 import { profileSchema } from '../../validators/auth.validators'
 import { PencilIcon } from '../shared/Icons'
+import ImageInput from '../shared/ImageInput'
 import Modal from '../shared/Modal'
 
 const ProfileForm = ({ user, onSaved, onCancel, onBusyChange }) => {
@@ -17,7 +18,7 @@ const ProfileForm = ({ user, onSaved, onCancel, onBusyChange }) => {
   const emailId = useId()
   const [serverError, setServerError] = useState(null)
 
-  const { register, handleSubmit, control, formState: { errors, isValid, isSubmitting, dirtyFields } } = useForm({
+  const { register, handleSubmit, control, resetField, formState: { errors, isValid, isSubmitting, dirtyFields } } = useForm({
     resolver: joiResolver(profileSchema),
     mode: 'onChange',
     defaultValues: { username: user.username, email: user.email ?? '' }
@@ -78,14 +79,17 @@ const ProfileForm = ({ user, onSaved, onCancel, onBusyChange }) => {
 
   return (
     <form className="recipe-form" onSubmit={handleSubmit(saveProfile)}>
-      <div className="form-group">
-        <label htmlFor={imageId}>Foto de perfil (JPG o PNG, hasta 4 MB)</label>
-        {shownImage && !errors.image && (
-          <span className="avatar large"><img src={shownImage} alt="Vista previa" /></span>
-        )}
-        <input id={imageId} type="file" accept="image/jpeg,image/png" {...register('image')} />
-        {errors.image && <span className="error">{errors.image.message}</span>}
-      </div>
+      <ImageInput
+        id={imageId}
+        label="Foto de perfil"
+        shape="round"
+        preview={errors.image ? user.profilePicture : shownImage}
+        fallback={<span className="image-input-initial">{user.username[0].toUpperCase()}</span>}
+        fileName={imageFile?.name}
+        error={errors.image?.message}
+        onClear={() => resetField('image')}
+        inputProps={register('image')}
+      />
 
       <div className="form-group">
         <label htmlFor={usernameId}>Usuario</label>

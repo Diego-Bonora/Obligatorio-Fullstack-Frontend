@@ -5,6 +5,7 @@ import api from '../../api/api'
 import { getErrorMessage } from '../../utils/apiError'
 import FollowButton from '../../components/shared/FollowButton'
 import UserRecipes from '../../components/profile/UserRecipes'
+import ProfileHeader from '../../components/profile/ProfileHeader'
 
 const UserProfile = ({ userId }) => {
   const [user, setUser] = useState(null)
@@ -44,20 +45,10 @@ const UserProfile = ({ userId }) => {
   }
 
   return (
-    <section>
-      <header className="profile-header">
-        <span className="avatar large">
-          {user.profilePicture
-            ? <img src={user.profilePicture} alt="" />
-            : user.username[0].toUpperCase()}
-        </span>
-        <div className="profile-info">
-          <h1>{user.username}</h1>
-          <FollowButton userId={user._id} />
-        </div>
-      </header>
+    <div className="profile-page">
+      <ProfileHeader user={user} actions={<FollowButton userId={user._id} />} />
       <UserRecipes userId={user._id} />
-    </section>
+    </div>
   )
 }
 

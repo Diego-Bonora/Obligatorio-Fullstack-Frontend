@@ -5,7 +5,7 @@ import api from '../../api/api'
 import { setUser } from '../../features/auth/auth.slice'
 import { getErrorMessage } from '../../utils/apiError'
 
-const FollowButton = ({ userId }) => {
+const FollowButton = ({ userId, className = '', followingLabel = 'Dejar de seguir' }) => {
   const dispatch = useDispatch()
   const currentUser = useSelector(state => state.auth.user)
   const [busy, setBusy] = useState(false)
@@ -29,11 +29,11 @@ const FollowButton = ({ userId }) => {
   return (
     <button
       type="button"
-      className={`btn ${isFollowing ? 'secondary' : 'primary'}`}
+      className={`btn ${isFollowing ? 'secondary' : 'primary'} ${className}`.trim()}
       disabled={!currentUser || busy}
       onClick={toggleFollow}
     >
-      {isFollowing ? 'Dejar de seguir' : 'Seguir'}
+      {isFollowing ? followingLabel : 'Seguir'}
     </button>
   )
 }

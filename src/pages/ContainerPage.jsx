@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink, Outlet } from 'react-router'
+import { Outlet } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import api from '../api/api'
 import { logout, setUser } from '../features/auth/auth.slice'
 import { setCategories } from '../features/categories/categories.slice'
 import { getErrorMessage } from '../utils/apiError'
-import Avatar from '../components/shared/Avatar'
+import AppHeader from '../components/layout/AppHeader'
+import BottomNav from '../components/layout/BottomNav'
 
 const ContainerPage = () => {
   const dispatch = useDispatch()
@@ -50,27 +51,8 @@ const ContainerPage = () => {
   }
 
   return (
-    <>
-      <header className="main-header">
-        <div className="header-content">
-          <Link to="/" className="app-logo">🍲 <span>Recetario</span></Link>
-          <nav className="main-nav">
-            <NavLink to="/" end>Inicio</NavLink>
-            <NavLink to="/users" end>Usuarios</NavLink>
-            <NavLink to="/profile">Mi perfil</NavLink>
-            {user?.role === 'admin' && <NavLink to="/admin">Admin</NavLink>}
-          </nav>
-          <div className="header-user">
-            {user && (
-              <Link to="/profile" className="header-profile">
-                <Avatar user={user} size="small" />
-                <span className="header-username">{user.username}</span>
-              </Link>
-            )}
-            <button type="button" className="btn secondary" onClick={handleLogout}>Cerrar sesión</button>
-          </div>
-        </div>
-      </header>
+    <div className="app-shell">
+      <AppHeader user={user} onLogout={handleLogout} />
 
       <main className="container">
         {userError && (
@@ -81,7 +63,9 @@ const ContainerPage = () => {
         )}
         <Outlet />
       </main>
-    </>
+
+      <BottomNav isAdmin={user?.role === 'admin'} onLogout={handleLogout} />
+    </div>
   )
 }
 

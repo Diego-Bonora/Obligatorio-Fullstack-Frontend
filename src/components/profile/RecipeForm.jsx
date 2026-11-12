@@ -6,6 +6,8 @@ import { toast } from 'react-toastify'
 import api from '../../api/api'
 import { getErrorMessage } from '../../utils/apiError'
 import { recipeSchema } from '../../validators/recipe.validators'
+import { CameraIcon } from '../shared/Icons'
+import ImageInput from '../shared/ImageInput'
 
 const emptyRecipe = {
   title: '',
@@ -46,7 +48,7 @@ const RecipeForm = ({ recipe, onSaved, onCancel, onBusyChange }) => {
   const categories = useSelector(state => state.categories.list)
   const [serverError, setServerError] = useState(null)
 
-  const { register, handleSubmit, control, formState: { errors, isValid, isSubmitting, dirtyFields } } = useForm({
+  const { register, handleSubmit, control, resetField, formState: { errors, isValid, isSubmitting, dirtyFields } } = useForm({
     resolver: joiResolver(recipeSchema),
     mode: 'onChange',
     defaultValues: isEdit ? toFormValues(recipe) : emptyRecipe
@@ -219,12 +221,16 @@ const RecipeForm = ({ recipe, onSaved, onCancel, onBusyChange }) => {
         {errors.tags && <span className="error">{errors.tags.message}</span>}
       </div>
 
-      <div className="form-group">
-        <label htmlFor={imageId}>{recipe?.imageUrl ? 'Cambiar imagen' : 'Imagen'} (JPG o PNG, hasta 4 MB)</label>
-        <input id={imageId} type="file" accept="image/jpeg,image/png" {...register('image')} />
-        {errors.image && <span className="error">{errors.image.message}</span>}
-        {shownImage && !errors.image && <img className="image-preview" src={shownImage} alt="Vista previa" />}
-      </div>
+      <ImageInput
+        id={imageId}
+        label="Imagen"
+        preview={errors.image ? recipe?.imageUrl : shownImage}
+        fallback={<span className="image-input-empty"><CameraIcon size={32} strokeWidth={1.6} className="" />Agregá una foto de tu receta</span>}
+        fileName={imageFile?.name}
+        error={errors.image?.message}
+        onClear={() => resetField('image')}
+        inputProps={register('image')}
+      />
 
       {serverError && <p className="error">{serverError}</p>}
 

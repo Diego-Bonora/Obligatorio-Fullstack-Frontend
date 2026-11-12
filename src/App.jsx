@@ -21,6 +21,9 @@ import Stats from './components/admin/Stats'
 import NotFoundPage from './pages/not-found/NotFoundPage'
 import UsersPage from './pages/users/UsersPage'
 import UserProfilePage from './pages/users/UserProfilePage'
+import WelcomePage from './pages/welcome/WelcomePage'
+import NewRecipePage from './pages/recipe-new/NewRecipePage'
+import SettingsPage from './pages/settings/SettingsPage'
 
 function App() {
   return (
@@ -32,9 +35,12 @@ function App() {
             <Route path="register" element={<RegisterPage />} />
           </Route>
           <Route element={<ProtectedRoute />}>
+            <Route path="welcome" element={<WelcomePage />} />
             <Route path="/" element={<ContainerPage />}>
               <Route index element={<FeedPage />} />
+              <Route path="recipes/new" element={<NewRecipePage />} />
               <Route path="recipes/:id" element={<RecipeDetailPage />} />
+              <Route path="settings" element={<SettingsPage />} />
               <Route path="users" element={<UsersPage/>} />
               <Route path="users/:id" element={<UserProfilePage />} />
               <Route path="profile" element={<ProfilePage />} />

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 470 104" role="img" aria-label="Hecho en casa — Recetas reales de gente real">
+<style>.t{font-family:Pacifico,cursive;font-weight:400}.s{font-family:Nunito,sans-serif;font-weight:800;letter-spacing:.12em;text-transform:uppercase}</style>
+<g transform="translate(0 4) scale(1.5)" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M8 30 L32 10 L56 30 V54 a2 2 0 0 1 -2 2 H10 a2 2 0 0 1 -2 -2 Z" stroke="#1F7A44" stroke-width="4"/><path d="M19 38 h26 a13 13 0 0 1 -26 0z" fill="#1F7A44"/><path d="M28 33 q-3 -3 0 -6 M36 33 q-3 -3 0 -6" stroke="#1F7A44" stroke-width="3"/></g>
+<text x="116" y="56" class="t" font-size="44" fill="#1E2422">Hecho en casa</text>
+<text x="118" y="86" class="s" font-size="17" fill="#555B58">Recetas reales de gente real</text>
+</svg>
