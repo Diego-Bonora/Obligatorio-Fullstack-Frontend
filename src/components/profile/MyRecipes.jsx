@@ -1,23 +1,26 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Link } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
 import { toast } from 'react-toastify'
 import api from '../../api/api'
 import { getErrorMessage } from '../../utils/apiError'
 import { setUser } from '../../features/auth/auth.slice'
-import RecipeCard from '../shared/RecipeCard'
+import { PLUS_RECIPE_LIMIT } from '../../utils/plans'
+import { categoryOptions, difficultyOptions } from '../../utils/filters'
+import CompactRecipeCard from '../shared/CompactRecipeCard'
+import FilterChip from '../shared/FilterChip'
 import RecipeForm from './RecipeForm'
 import Modal from '../shared/Modal'
 import Pagination from '../shared/Pagination'
+import { PlusIcon, PotIcon } from '../shared/Icons'
 
-const PLUS_RECIPE_LIMIT = 4
+const PAGE_SIZE = 6
 
 const MyRecipes = () => {
   const dispatch = useDispatch()
   const user = useSelector(state => state.auth.user)
   const categories = useSelector(state => state.categories.list)
   const userId = user?._id
-  // the cards show the author's name, so a profile edit has to reload them
-  const username = user?.username
 
   const [recipes, setRecipes] = useState([])
   const [meta, setMeta] = useState(null)
@@ -25,10 +28,11 @@ const MyRecipes = () => {
   const [filters, setFilters] = useState({ category: '', difficulty: '' })
   const [reloadKey, setReloadKey] = useState(0)
   const [loading, setLoading] = useState(true)
-  // null = closed, { recipe: null } = create, { recipe } = edit
-  const [modal, setModal] = useState(null)
+  const [error, setError] = useState(null)
+  // recipe being edited (creating now lives in /recipes/new)
+  const [editing, setEditing] = useState(null)
   const [saving, setSaving] = useState(false)
-  const [deletingId, setDeletingId] = useState(null)
+  const [deletingRecipe, setDeletingRecipe] = useState(null)
   const [deleting, setDeleting] = useState(false)
 
   const reachedLimit = user?.plan === 'plus' && user.recipesCount >= PLUS_RECIPE_LIMIT
@@ -40,15 +44,16 @@ const MyRecipes = () => {
 
     const loadRecipes = async () => {
       setLoading(true)
+      setError(null)
       const activeFilters = Object.fromEntries(Object.entries(filters).filter(([, value]) => value))
       try {
-        const { data } = await api.get('/recipes', { params: { author: userId, page, limit: 5, ...activeFilters } })
+        const { data } = await api.get('/recipes', { params: { author: userId, page, limit: PAGE_SIZE, ...activeFilters } })
         // a slower answer for an older filter or page must not replace the current one
         if (ignore) return
         setRecipes(data.data)
         setMeta(data.meta)
-      } catch (error) {
-        if (!ignore) toast.error(getErrorMessage(error))
+      } catch (err) {
+        if (!ignore) setError(getErrorMessage(err))
       } finally {
         if (!ignore) setLoading(false)
       }
@@ -56,51 +61,42 @@ const MyRecipes = () => {
     loadRecipes()
 
     return () => { ignore = true }
-  }, [userId, username, page, filters, reloadKey])
+  }, [userId, page, filters, reloadKey])
 
   const refreshUser = async () => {
     try {
       const { data: me } = await api.get('/users/me')
       dispatch(setUser(me))
-    } catch (error) {
-      console.error('Error al actualizar el usuario:', error)
+    } catch (err) {
+      console.error('Error al actualizar el usuario:', err)
     }
   }
 
-  const closeModal = useCallback(() => setModal(null), [])
+  const closeEdit = useCallback(() => setEditing(null), [])
 
-  const handleFilterChange = (event) => {
-    const { name, value } = event.target
+  const changeFilter = (name, value) => {
     setFilters(prev => ({ ...prev, [name]: value }))
     setPage(1)
   }
 
   const handleSaved = (saved) => {
-    const isEdit = Boolean(modal.recipe)
-    setModal(null)
+    setEditing(null)
     setSaving(false)
-
-    if (isEdit) {
-      // the PATCH answer has the author id only, so keep the populated author already shown
-      setRecipes(prev => prev.map(recipe => recipe._id === saved._id ? { ...saved, author: recipe.author } : recipe))
-      return
-    }
-    setPage(1)
-    setReloadKey(prev => prev + 1)
-    refreshUser()
+    // the PATCH answer has the author id only, so keep the populated author already shown
+    setRecipes(prev => prev.map(recipe => recipe._id === saved._id ? { ...saved, author: recipe.author } : recipe))
   }
 
-  const deleteRecipe = async (id) => {
+  const deleteRecipe = async () => {
     setDeleting(true)
     try {
-      const { data } = await api.delete(`/recipes/${id}`)
+      const { data } = await api.delete(`/recipes/${deletingRecipe._id}`)
       toast.success(data.message)
-      setDeletingId(null)
+      setDeletingRecipe(null)
       if (recipes.length === 1 && page > 1) setPage(page - 1)
       else setReloadKey(prev => prev + 1)
       await refreshUser()
-    } catch (error) {
-      toast.error(getErrorMessage(error))
+    } catch (err) {
+      toast.error(getErrorMessage(err))
     } finally {
       setDeleting(false)
     }
@@ -109,71 +105,75 @@ const MyRecipes = () => {
   const getCategoryName = (id) => categories.find(category => category._id === id)?.name
 
   return (
-    <section className="recipe-list">
-      <div className="section-header">
-        <h2>Mis recetas</h2>
-        <button type="button" className="btn primary" disabled={!user || reachedLimit} onClick={() => setModal({ recipe: null })}>
-          + Nueva receta
-        </button>
+    <section className="profile-recipes">
+      <h2>Mis recetas</h2>
+
+      <div className="profile-recipes-toolbar">
+        <FilterChip label="Categoría" options={categoryOptions(categories)} value={filters.category} onChange={value => changeFilter('category', value)} />
+        <FilterChip label="Dificultad" options={difficultyOptions} value={filters.difficulty} onChange={value => changeFilter('difficulty', value)} />
+        <span className="filters-spacer" />
+        {reachedLimit
+          ? <button type="button" className="btn primary" disabled><PlusIcon size={18} />Nueva receta</button>
+          : <Link to="/recipes/new" className="btn primary"><PlusIcon size={18} />Nueva receta</Link>}
       </div>
+
       {reachedLimit && (
-        <p className="notice">Llegaste al límite de {PLUS_RECIPE_LIMIT} recetas del plan plus. Pasate a premium para publicar sin límite.</p>
+        <p className="notice">Llegaste al límite de {PLUS_RECIPE_LIMIT} recetas del plan Plus. Pasate a premium para publicar sin límite.</p>
       )}
 
-      <div className="filters">
-        <select name="category" value={filters.category} onChange={handleFilterChange} aria-label="Filtrar por categoría">
-          <option value="">Todas las categorías</option>
-          {categories.filter(category => category.active).map(category => (
-            <option key={category._id} value={category._id}>{category.name}</option>
-          ))}
-        </select>
-        <select name="difficulty" value={filters.difficulty} onChange={handleFilterChange} aria-label="Filtrar por dificultad">
-          <option value="">Todas las dificultades</option>
-          <option value="easy">Fácil</option>
-          <option value="medium">Media</option>
-          <option value="hard">Difícil</option>
-        </select>
-      </div>
-
       {loading && <p className="loading">Cargando recetas...</p>}
-      {!loading && recipes.length === 0 && (
+
+      {error && (
+        <div className="feed-error">
+          <p className="error">{error}</p>
+          <button type="button" className="btn secondary" onClick={() => setReloadKey(prev => prev + 1)}>Reintentar</button>
+        </div>
+      )}
+
+      {!loading && !error && recipes.length === 0 && (
         hasFilters
           ? <p className="loading">No hay recetas con esos filtros.</p>
           : (
-            <div className="empty-state">
-              <p>Todavía no publicaste recetas.</p>
-              {!reachedLimit && (
-                <button type="button" className="btn primary" disabled={!user} onClick={() => setModal({ recipe: null })}>
-                  + Nueva receta
-                </button>
-              )}
+            <div className="empty-state profile-empty">
+              <span className="profile-empty-icon tone-butter"><PotIcon size={42} strokeWidth={1.6} className="" /></span>
+              <h3>Todavía no publicaste recetas</h3>
+              <p>Compartí tu primera receta con la comunidad.</p>
+              {!reachedLimit && <Link to="/recipes/new" className="btn primary"><PlusIcon size={18} />Crear mi primera receta</Link>}
             </div>
           )
       )}
-      {!loading && recipes.map(recipe => (
-        <RecipeCard key={recipe._id} recipe={recipe} categoryName={getCategoryName(recipe.category)}>
-          {deletingId === recipe._id
-            ? (
-              <div className="confirm-inline">
-                <span>¿Eliminar esta receta?</span>
-                <button type="button" className="btn danger" disabled={deleting} onClick={() => deleteRecipe(recipe._id)}>Sí</button>
-                <button type="button" className="btn secondary" disabled={deleting} onClick={() => setDeletingId(null)}>No</button>
-              </div>
-            )
-            : (
-              <>
-                <button type="button" className="btn secondary" onClick={() => setModal({ recipe })}>Editar</button>
-                <button type="button" className="btn secondary" onClick={() => setDeletingId(recipe._id)}>Eliminar</button>
-              </>
-            )}
-        </RecipeCard>
-      ))}
 
-      <Pagination meta={meta} onPageChange={setPage} />
+      {!loading && !error && recipes.length > 0 && (
+        <div className="compact-grid">
+          {recipes.map(recipe => (
+            <CompactRecipeCard
+              key={recipe._id}
+              recipe={recipe}
+              categoryName={getCategoryName(recipe.category)}
+              onEdit={setEditing}
+              onDelete={setDeletingRecipe}
+            />
+          ))}
+        </div>
+      )}
 
-      {modal && (
-        <Modal title={modal.recipe ? 'Editar receta' : 'Nueva receta'} onClose={saving ? undefined : closeModal}>
-          <RecipeForm recipe={modal.recipe} onSaved={handleSaved} onCancel={closeModal} onBusyChange={setSaving} />
+      {!error && <Pagination meta={meta} onPageChange={setPage} />}
+
+      {editing && (
+        <Modal title="Editar receta" onClose={saving ? undefined : closeEdit}>
+          <RecipeForm recipe={editing} onSaved={handleSaved} onCancel={closeEdit} onBusyChange={setSaving} />
+        </Modal>
+      )}
+
+      {deletingRecipe && (
+        <Modal title="Eliminar receta" onClose={deleting ? undefined : () => setDeletingRecipe(null)}>
+          <p>¿Eliminar <strong>{deletingRecipe.title}</strong>? No se puede deshacer.</p>
+          <div className="form-actions">
+            <button type="button" className="btn secondary" disabled={deleting} onClick={() => setDeletingRecipe(null)}>Cancelar</button>
+            <button type="button" className="btn danger" disabled={deleting} onClick={deleteRecipe}>
+              {deleting ? 'Eliminando...' : 'Eliminar'}
+            </button>
+          </div>
         </Modal>
       )}
     </section>

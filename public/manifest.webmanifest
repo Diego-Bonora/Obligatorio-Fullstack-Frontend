@@ -1,0 +1,13 @@
+{
+  "name": "Hecho en casa",
+  "short_name": "Hecho en casa",
+  "description": "Recetas reales de gente real",
+  "lang": "es",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F7F7F5",
+  "theme_color": "#1F7A44",
+  "icons": [
+    { "src": "/brand/icono-app.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

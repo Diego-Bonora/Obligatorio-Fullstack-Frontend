@@ -5,6 +5,7 @@ import api from '../../api/api'
 import { getErrorMessage } from '../../utils/apiError'
 import { formatRelativeDate } from '../../utils/date'
 import Pagination from '../shared/Pagination'
+import { FlagIcon } from '../shared/Icons'
 
 const reasonLabels = {
   spam: 'Spam',
@@ -17,6 +18,15 @@ const statusLabels = {
   reviewed: 'Receta dada de baja',
   dismissed: 'Descartado'
 }
+
+const statusBadges = { pending: 'dark', reviewed: 'danger', dismissed: '' }
+
+const statusFilters = [
+  { value: 'pending', label: 'Pendientes' },
+  { value: 'reviewed', label: 'Dadas de baja' },
+  { value: 'dismissed', label: 'Descartados' },
+  { value: '', label: 'Todos' }
+]
 
 const Reports = () => {
     const [status, setStatus] = useState('pending')
@@ -55,8 +65,8 @@ const Reports = () => {
 
   const reload = () => setReloadCount(prev => prev + 1)
 
-  const handleStatusChange = (event) => {
-    setStatus(event.target.value)
+  const handleStatusChange = (value) => {
+    setStatus(value)
     setPage(1)
     setConfirmingId(null)
   }
@@ -81,7 +91,7 @@ const Reports = () => {
   const renderActions = (report) => {
     const busy = busyId === report._id
 
-    if (report.status !== 'pending') return <span className="muted">Resuelto</span>
+    if (report.status !== 'pending') return null
 
     if (confirmingId === report._id) {
       return (
@@ -103,16 +113,22 @@ const Reports = () => {
 
   return (
     <section className="admin-section">
-      <div className="section-header">
-        <h2>Recetas reportadas</h2>
-        <div className="filters">
-          <select value={status} onChange={handleStatusChange} aria-label="Filtrar por estado">
-            <option value="pending">Pendientes</option>
-            <option value="reviewed">Recetas dadas de baja</option>
-            <option value="dismissed">Descartados</option>
-            <option value="">Todos</option>
-          </select>
-        </div>
+      <div className="admin-section-header">
+        <h2>Recetas reportadas{meta && <span className="count">{meta.total}</span>}</h2>
+      </div>
+      <div className="segmented admin-segmented" role="tablist" aria-label="Filtrar por estado">
+        {statusFilters.map(filter => (
+          <button
+            key={filter.value}
+            type="button"
+            role="tab"
+            aria-selected={status === filter.value}
+            className="segmented-option"
+            onClick={() => handleStatusChange(filter.value)}
+          >
+            {filter.label}
+          </button>
+        ))}
       </div>
 
       {successMessage && <p className="notice">{successMessage}</p>}
@@ -128,21 +144,25 @@ const Reports = () => {
 
       {!loading && !error && reports.length === 0 && <p className="loading">No hay reportes para mostrar.</p>}
 
-      {!error && (
-        <ul className="category-list">
+      {!error && !loading && reports.length > 0 && (
+        <ul className="admin-list">
           {reports.map(report => (
-            <li key={report._id} className="card category-item">
-              <div>
+            <li key={report._id} className="admin-item">
+              <span className="admin-item-icon tone-peach"><FlagIcon size={20} className="" /></span>
+              <div className="admin-item-info">
                 <h3>
                   {report.recipe
                     ? <Link to={`/recipes/${report.recipe._id}`}>{report.recipe.title}</Link>
                     : <span className="muted">Receta no disponible</span>}
                 </h3>
-                <p>{reasonLabels[report.reason] ?? report.reason} · @{report.reportedBy?.username ?? 'usuario'} · {formatRelativeDate(report.createdAt)}</p>
-                {report.details && <p>{report.details}</p>}
-                <span className="category-status">{statusLabels[report.status] ?? report.status}</span>
+                <p className="muted">Reportada por @{report.reportedBy?.username ?? 'usuario'} · {formatRelativeDate(report.createdAt)}</p>
+                {report.details && <blockquote className="admin-quote">{report.details}</blockquote>}
+                <div className="badges">
+                  <span className="badge warning">{reasonLabels[report.reason] ?? report.reason}</span>
+                  <span className={`badge ${statusBadges[report.status] ?? ''}`}>{statusLabels[report.status] ?? report.status}</span>
+                </div>
               </div>
-              <div className="category-actions">{renderActions(report)}</div>
+              <div className="admin-item-actions">{renderActions(report)}</div>
             </li>
           ))}
         </ul>

@@ -1,4 +1,4 @@
-# Recetario — Frontend
+# Hecho en casa — Frontend
 
 Obligatorio 2 (ORT, Desarrollo Full Stack integrado con IA): React frontend for the recipe API (Obligatorio 1).
 

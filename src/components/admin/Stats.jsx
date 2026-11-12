@@ -7,9 +7,10 @@ import { getErrorMessage } from '../../utils/apiError'
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip)
 
-const COLOR_BAR = '#43a047'
-const COLOR_TEXT = '#37474f'
-const COLOR_GRID = '#e8f5e9'
+// Same values as --color-primary, --color-text and --color-border in styles.css
+const COLOR_BAR = '#1F7A44'
+const COLOR_TEXT = '#1E2422'
+const COLOR_GRID = '#DCE0DD'
 const CHART_FONT = { family: 'Nunito, system-ui, sans-serif', size: 13 }
 
 const ROW_HEIGHT = 40
@@ -44,8 +45,8 @@ const mergeUncategorized = (rows) => {
   return uncategorized > 0 ? [...named, { category: 'Sin categoría', count: uncategorized }] : named
 }
 
-const StatTile = ({ label, value }) => (
-  <div className="card stat-tile">
+const StatTile = ({ label, value, tone }) => (
+  <div className={`side-card stat-tile${tone ? ` stat-${tone}` : ''}`}>
     <p className="stat-label">{label}</p>
     <p className="stat-value">{value}</p>
   </div>
@@ -64,7 +65,7 @@ const RankingChart = ({ title, seriesLabel, rows }) => {
   }
 
   return (
-    <div className="card chart-card">
+    <div className="side-card chart-card">
       <h3>{title}</h3>
       {rows.length === 0
         ? <p className="loading">Todavía no hay datos.</p>
@@ -118,7 +119,7 @@ const Stats = () => {
 
   return (
     <section className="admin-section">
-      <div className="section-header">
+      <div className="admin-section-header">
         <h2>Estadísticas</h2>
       </div>
 
@@ -134,9 +135,9 @@ const Stats = () => {
       {!loading && !error && stats && (
         <>
           <div className="stat-tiles">
-            <StatTile label="Usuarios activos" value={usersOnPlan('plus') + usersOnPlan('premium')} />
-            <StatTile label="Plan plus" value={usersOnPlan('plus')} />
-            <StatTile label="Plan premium" value={usersOnPlan('premium')} />
+            <StatTile label="Usuarios activos" value={usersOnPlan('plus') + usersOnPlan('premium')} tone="primary" />
+            <StatTile label="Plan Plus" value={usersOnPlan('plus')} />
+            <StatTile label="Plan Premium" value={usersOnPlan('premium')} />
           </div>
 
           <div className="stat-charts">

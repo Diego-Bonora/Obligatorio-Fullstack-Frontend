@@ -1,12 +1,12 @@
 import { useEffect, useMemo } from 'react'
-import { useSearchParams } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { useDispatch, useSelector } from 'react-redux'
-import { useForm } from 'react-hook-form'
-import { joiResolver } from '@hookform/resolvers/joi'
 import { toast } from 'react-toastify'
 import { clearPendingMessage } from '../../features/messages/messages.slice'
-import { ingredientSearchSchema } from '../../validators/feed.validators'
 import RecipeFeed from '../../components/feed/RecipeFeed'
+import FeedFilters from '../../components/feed/FeedFilters'
+import FeedSidebar from '../../components/feed/FeedSidebar'
+import Avatar from '../../components/shared/Avatar'
 
 const tabs = [
   { value: 'recent', label: 'Recientes' },
@@ -14,7 +14,7 @@ const tabs = [
   { value: 'popular', label: 'Populares' }
 ]
 
-const FILTER_KEYS = ['category', 'difficulty', 'maxTime', 'ingredient']
+const FILTER_KEYS = ['category', 'difficulty', 'maxTime', 'ingredient', 'tags']
 
 // The API answers 400 to any unknown or invalid query key, so links with extra
 // params (e.g. ?fbclid=... added by social apps) would break the feed.
@@ -24,34 +24,30 @@ const pickFilters = (params) => {
   const difficulty = params.get('difficulty')
   const maxTime = params.get('maxTime')
   const ingredient = params.get('ingredient')?.trim()
+  const tags = params.get('tags')?.trim()
 
   if (/^[a-f0-9]{24}$/.test(category)) filters.category = category
   if (['easy', 'medium', 'hard'].includes(difficulty)) filters.difficulty = difficulty
   if (['15', '30', '60'].includes(maxTime)) filters.maxTime = maxTime
   if (ingredient && ingredient.length <= 50) filters.ingredient = ingredient
+  if (tags && tags.length <= 200) filters.tags = tags
   return filters
 }
 
-const IngredientSearch = ({ defaultValue, onSearch }) => {
-  const { register, handleSubmit, formState: { errors, isValid } } = useForm({
-    resolver: joiResolver(ingredientSearchSchema),
-    mode: 'onChange',
-    defaultValues: { ingredient: defaultValue }
-  })
-
-  return (
-    <form className="ingredient-search" onSubmit={handleSubmit(({ ingredient }) => onSearch(ingredient))}>
-      <input type="search" placeholder="Buscar por ingrediente" aria-label="Buscar por ingrediente" {...register('ingredient')} />
-      <button type="submit" className="btn secondary" disabled={!isValid}>Buscar</button>
-      {errors.ingredient && <span className="error">{errors.ingredient.message}</span>}
-    </form>
-  )
-}
+const FeedComposer = ({ user }) => (
+  <div className="feed-composer">
+    <Avatar user={user} />
+    <Link to="/recipes/new" className="feed-composer-prompt">
+      ¿Qué cocinaste hoy{user ? `, ${user.username}` : ''}?
+    </Link>
+    <Link to="/recipes/new" className="btn soft feed-composer-button">Publicar receta</Link>
+  </div>
+)
 
 const FeedPage = () => {
   const dispatch = useDispatch()
   const [searchParams, setSearchParams] = useSearchParams()
-  const categories = useSelector(state => state.categories.list)
+  const user = useSelector(state => state.auth.user)
   const pendingMessage = useSelector(state => state.messages.pending)
   // fixed toastId: StrictMode runs the effect twice before the clear lands
   useEffect(() => {
@@ -80,54 +76,35 @@ const FeedPage = () => {
     setSearchParams(next)
   }
 
-  const hasFilters = FILTER_KEYS.some(key => filters[key])
-
   return (
-    <section className="recipe-list">
-      <h1>Inicio</h1>
+    <div className="feed-layout">
+      <section className="feed-main">
+        <h1 className="visually-hidden">Inicio</h1>
 
-      <div className="tabs" role="tablist">
-        {tabs.map(tab => (
-          <button
-            key={tab.value}
-            type="button"
-            role="tab"
-            aria-selected={filters.feed === tab.value}
-            className={`tab ${filters.feed === tab.value ? 'active' : ''}`}
-            onClick={() => updateParam('feed', tab.value)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+        <FeedComposer user={user} />
 
-      <div className="feed-filters">
-        <IngredientSearch key={filters.ingredient ?? ''} defaultValue={filters.ingredient ?? ''} onSearch={value => updateParam('ingredient', value)} />
-        <div className="filters">
-          <select value={filters.category ?? ''} onChange={event => updateParam('category', event.target.value)} aria-label="Filtrar por categoría">
-            <option value="">Todas las categorías</option>
-            {categories.filter(category => category.active).map(category => (
-              <option key={category._id} value={category._id}>{category.name}</option>
-            ))}
-          </select>
-          <select value={filters.difficulty ?? ''} onChange={event => updateParam('difficulty', event.target.value)} aria-label="Filtrar por dificultad">
-            <option value="">Todas las dificultades</option>
-            <option value="easy">Fácil</option>
-            <option value="medium">Media</option>
-            <option value="hard">Difícil</option>
-          </select>
-          <select value={filters.maxTime ?? ''} onChange={event => updateParam('maxTime', event.target.value)} aria-label="Filtrar por tiempo">
-            <option value="">Cualquier tiempo</option>
-            <option value="15">Hasta 15 min</option>
-            <option value="30">Hasta 30 min</option>
-            <option value="60">Hasta 1 hora</option>
-          </select>
-          {hasFilters && <button type="button" className="btn link" onClick={clearFilters}>Limpiar filtros</button>}
+        <div className="segmented" role="tablist" aria-label="Qué recetas ver">
+          {tabs.map(tab => (
+            <button
+              key={tab.value}
+              type="button"
+              role="tab"
+              aria-selected={filters.feed === tab.value}
+              className="segmented-option"
+              onClick={() => updateParam('feed', tab.value)}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
-      </div>
 
-      <RecipeFeed key={filtersKey} filters={filters} />
-    </section>
+        <FeedFilters filters={filters} onChange={updateParam} onClear={clearFilters} />
+
+        <RecipeFeed key={filtersKey} filters={filters} />
+      </section>
+
+      <FeedSidebar activeIngredient={filters.ingredient} onIngredient={value => updateParam('ingredient', value)} />
+    </div>
   )
 }
 

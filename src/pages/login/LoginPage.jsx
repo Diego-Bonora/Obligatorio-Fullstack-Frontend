@@ -1,11 +1,11 @@
+import AuthLayout from '../../components/auth/AuthLayout'
 import LoginForm from '../../components/login/LoginForm'
 
 const LoginPage = () => {
   return (
-    <div className="container auth-container">
-      <h1>Iniciar sesión</h1>
+    <AuthLayout variant="login">
       <LoginForm />
-    </div>
+    </AuthLayout>
   )
 }
 

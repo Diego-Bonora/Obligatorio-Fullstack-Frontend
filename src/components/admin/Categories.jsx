@@ -5,7 +5,7 @@ import api from '../../api/api'
 import { setCategories } from '../../features/categories/categories.slice'
 import { getErrorMessage } from '../../utils/apiError'
 import Modal from '../shared/Modal'
-import { PencilIcon, PowerIcon } from '../shared/Icons'
+import { PencilIcon, PlusIcon, PowerIcon, TagIcon } from '../shared/Icons'
 import CategoryForm from './CategoryForm'
 
 const Categories = () => {
@@ -111,23 +111,26 @@ const Categories = () => {
 
   return (
     <section className="admin-section">
-      <div className="section-header">
-        <h2>Categorías</h2>
+      <div className="admin-section-header">
+        <h2>Categorías{categories.length > 0 && <span className="count">{categories.length}</span>}</h2>
         <button type="button" className="btn primary" onClick={() => setModal({ category: null })}>
-          + Nueva categoría
+          <PlusIcon size={18} />Nueva categoría
         </button>
       </div>
 
       {categories.length === 0 && <p className="loading">No hay categorías para mostrar.</p>}
-      <ul className="category-list">
+      <ul className="admin-list">
         {categories.map(category => (
-          <li key={category._id} className="card category-item">
-            <div>
+          <li key={category._id} className={`admin-item${category.active ? '' : ' inactive'}`}>
+            <span className="admin-item-icon tone-mint"><TagIcon size={20} className="" /></span>
+            <div className="admin-item-info">
               <h3>{category.name}</h3>
-              {category.description && <p>{category.description}</p>}
-              <span className="category-status">{category.active ? 'Activa' : 'Inactiva'}</span>
+              {category.description && <p className="muted">{category.description}</p>}
+              <div className="badges">
+                <span className={`badge ${category.active ? 'success' : ''}`}>{category.active ? 'Activa' : 'Inactiva'}</span>
+              </div>
             </div>
-            <div className="category-actions">{renderActions(category)}</div>
+            <div className="admin-item-actions">{renderActions(category)}</div>
           </li>
         ))}
       </ul>

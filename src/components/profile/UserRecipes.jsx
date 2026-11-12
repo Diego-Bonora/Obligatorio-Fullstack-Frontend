@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import api from '../../api/api'
 import { getErrorMessage } from '../../utils/apiError'
-import RecipeCard from '../shared/RecipeCard'
+import CompactRecipeCard from '../shared/CompactRecipeCard'
 import Pagination from '../shared/Pagination'
+
+const PAGE_SIZE = 6
 
 const UserRecipes = ({ userId }) => {
   const categories = useSelector(state => state.categories.list)
@@ -21,7 +23,7 @@ const UserRecipes = ({ userId }) => {
       setLoading(true)
       setError(null)
       try {
-        const { data } = await api.get('/recipes', { params: { author: userId, page, limit: 5 } })
+        const { data } = await api.get('/recipes', { params: { author: userId, page, limit: PAGE_SIZE } })
         if (ignore) return
         setRecipes(data.data)
         setMeta(data.meta)
@@ -39,10 +41,8 @@ const UserRecipes = ({ userId }) => {
   const getCategoryName = (id) => categories.find(category => category._id === id)?.name
 
   return (
-    <section className="recipe-list">
-      <div className="section-header">
-        <h2>Recetas</h2>
-      </div>
+    <section className="profile-recipes">
+      <h2>Recetas{meta ? ` (${meta.total})` : ''}</h2>
 
       {loading && <p className="loading">Cargando recetas...</p>}
 
@@ -53,11 +53,15 @@ const UserRecipes = ({ userId }) => {
         </div>
       )}
 
-      {!loading && !error && recipes.length === 0 && <p className="loading">No hay recetas para mostrar.</p>}
+      {!loading && !error && recipes.length === 0 && <p className="loading">Todavía no publicó recetas.</p>}
 
-      {!loading && !error && recipes.map(recipe => (
-        <RecipeCard key={recipe._id} recipe={recipe} categoryName={getCategoryName(recipe.category)} />
-      ))}
+      {!loading && !error && recipes.length > 0 && (
+        <div className="compact-grid">
+          {recipes.map(recipe => (
+            <CompactRecipeCard key={recipe._id} recipe={recipe} categoryName={getCategoryName(recipe.category)} />
+          ))}
+        </div>
+      )}
 
       {!error && <Pagination meta={meta} onPageChange={setPage} />}
     </section>
